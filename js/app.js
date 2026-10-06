@@ -14,6 +14,7 @@
   function addEntry(e) {
     e.id = entries.length;
     e.info = M.analyzeEntry(e);
+    if (e.abbr) e.info = { pos: 'phrase', la: e.la, gr: '' }; // рецептурное сокращение: Rp., D.t.d., in amp.
     entries.push(e);
     const k = M.normLa(e.la);
     if (!byLemma.has(k)) byLemma.set(k, []);
@@ -49,7 +50,8 @@
   const phrases = [];
   entries.forEach(e => {
     if (e.info.pos === 'phrase') {
-      const words = e.la.replace(/[«»]/g, ' ').split(/\s+/).filter(Boolean).map(M.normLa);
+      const words = (e.abbr ? e.la.split(/[\s.]+/) : e.la.replace(/[«»,.!?;:()=]/g, ' ').split(/\s+/)).filter(Boolean).map(M.normLa).filter(Boolean);
+      if (!words.length) return;
       phrases.push({ e, words });
       return;
     }
@@ -64,6 +66,8 @@
       .replace(/^(глаг|местоим|числ|союз)\.?(\s*\([^)]*\))?\s*;\s*/, '').replace(/\b(нар|нескл)\.\s*/g, '').replace(/фарм\.\s*/g, '').replace(/\(сравн\. степень\)/g, '').trim();
   }
   function senses(e) {
+    if (e.abbr) return [];
+    if (e.whole) return [{ s: e.ru.replace(/\s*\([^)]*\)\s*$/, '').replace(/[.!]+$/, ''), prio: 0 }];
     const out = [];
     const base = cleanRu(e.ru);
     const paren = [];
@@ -100,7 +104,7 @@
       }
     });
   });
-  elements.forEach(el => {
+  elements.filter(el => el.type !== 'drug').forEach(el => {
     el.ru.split(/[;,]/).map(s => s.replace(/[…().]/g, '').replace(/\bо$/, '').trim()).filter(Boolean).forEach(s => {
       const w = ruWords(s); if (!w.length) return;
       ruAdd(ruElIndex, w.map(M.stemRu).join(' '), el);
@@ -109,6 +113,7 @@
 
   /* ================= Вспомогательное ================= */
   function firstSense(e) {
+    if (e.abbr) return e.ru.split(' — ').pop();
     const s = senses(e);
     return s.length ? s[0].s : e.ru;
   }
@@ -120,7 +125,7 @@
       case 'adj': return i.type === 'adj12' ? 'прил. 1–2 скл.' : i.type === 'comp' ? 'прил., сравн. степень (3 скл.)' : 'прил. 3 скл.';
       case 'verb': return 'глагол, ' + (i.conj === 5 ? 3 : i.conj) + ' спряж.';
       case 'prep': return 'предлог' + (i.governs.length ? ' + ' + i.governs.map(c => c === 'acc' ? 'Acc.' : 'Abl.').join(' / ') : '');
-      case 'phrase': return 'словосочетание';
+      case 'phrase': return e.abbr ? 'рецептурное сокращение' : e.whole ? 'афоризм' : 'словосочетание';
       case 'adv': return 'наречие';
       default: return 'неизменяемое';
     }
@@ -151,6 +156,7 @@
       const n = p.words.length;
       if (i + n > toks.length) continue;
       let ok = true;
+      if (p.e.abbr) { for (let j = 0; j < n && ok; j++) ok = toks[i + j].k === p.words[j]; if (ok) return p; continue; }
       for (let j = 0; j < n && ok; j++) ok = (j === 0 ? softEq(toks[i].k, p.words[0]) || toks[i].k === p.words[0] : softEq(toks[i + j].k, p.words[j]));
       if (ok) return p;
     }
@@ -178,7 +184,7 @@
   }
   /* Разбор по терминоэлементам (только для слов, которых нет в словаре) */
   const elPieces = [];
-  elements.forEach(el => el.el.split('/').map(s => M.normLa(s.trim())).filter(s => s.length >= 2 || s === 'a').forEach(p => elPieces.push({ p, el })));
+  elements.filter(el => el.type !== 'drug').forEach(el => el.el.split('/').map(s => M.normLa(s.trim())).filter(s => s.length >= 2 || s === 'a').forEach(p => elPieces.push({ p, el })));
   elPieces.sort((a, b) => b.p.length - a.p.length);
   function decompose(k) {
     const n = k.length; const best = new Array(n + 1).fill(null); best[0] = [];
@@ -568,7 +574,7 @@
     const more = $('#dict-more'); if (more) more.onclick = () => { dictLimit += 200; renderDict(); };
   }
   function renderElements() {
-    const groups = { prefix: 'Приставки', suffix: 'Терминоэлементы' };
+    const groups = { prefix: 'Приставки', num: 'Числительные-приставки', suffix: 'Терминоэлементы', drug: 'Частотные отрезки в названиях лекарственных средств' };
     let html = '';
     Object.keys(groups).forEach(t => {
       html += '<h3>' + groups[t] + '</h3><div class="el-grid">' + RAW.elements.filter(x => x.type === t).map(x => '<div class="el-item"><i>' + esc(x.el) + '</i><span>' + esc(x.ru) + '</span></div>').join('') + '</div>';
@@ -628,7 +634,7 @@
     $$('#dict-letters button').forEach(b => b.onclick = () => { const on = b.classList.contains('on'); $$('#dict-letters button').forEach(x => x.classList.remove('on')); if (!on) b.classList.add('on'); $('#dict-q').value = ''; dictLimit = 120; renderDict(); });
     renderElements();
     const h = location.hash.slice(1);
-    setTab(['la', 'ru', 'dict', 'el', 'train', 'about'].includes(h) ? h : 'la');
+    setTab(['la', 'ru', 'dict', 'el', 'gram', 'train', 'about'].includes(h) ? h : 'la');
     runLa(); runRu();
   }
   window.Translator = { translateLa, translateRu, buildLatin, entries, laIndex, decompose };

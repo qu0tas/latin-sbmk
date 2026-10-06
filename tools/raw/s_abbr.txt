@@ -1,0 +1,32 @@
+Ac. — Acidum — кислота
+acid. — Acidum — кислота
+Aq. dest. — Aqua destillata — вода дистиллированная
+D. — Da / Detur (ед. ч.); Dentur (мн. ч.) — выдай / пусть будет выдано (выданы)
+dec. — Decoctum — отвар
+dct. — Decoctum — отвар
+D. S. — Da. Signa. / Detur. Signetur. — выдай, обозначь / пусть будет выдано, пусть будет обозначено
+D.t.d. — Da (Dentur) tales doses — выдай (пусть будут выданы) такие дозы
+em. — Emulsum — эмульсия
+emuls. — Emulsum — эмульсия
+extr. — Extractum — экстракт, вытяжка
+f. — fiat (ед. ч.); fiant (мн. ч.) — пусть образуется (образуются)
+in amp. — in ampullis — в ампулах
+in obl. — in oblatis — в облатках
+in tab. — in tabulettis — в таблетках
+inf. — Infusum — настой
+liq. — Liquor — жидкость
+M. — Misce / Misceatur — смешай / пусть будет смешано
+M.D.S. — Misce. Da. Signa. — смешай, выдай, обозначь
+M. f. — Misce, fiat — смешай, пусть образуется
+ol. — Oleum — масло
+past. — Pasta — паста
+pulv. — Pulvis — порошок
+q. s. — quantum satis — сколько нужно, сколько потребуется
+Rp. — Recipe — возьми
+sol. — Solutio — раствор
+sp. — Species — сбор
+t-ra — Tinctura — настойка
+tinct. — Tinctura — настойка
+tct. — Tinctura — настойка
+ung. — Unguentum — мазь
+vitr. — Vitrum — склянка

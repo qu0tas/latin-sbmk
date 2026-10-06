@@ -191,3 +191,46 @@ table.tbl td{font-style:normal;font-family:inherit}
 .tr-srcs .bar{height:8px;background:var(--bad-soft);border-radius:99px;overflow:hidden}
 .tr-srcs .bar i{display:block;height:100%;background:var(--acc)}
 .bad-ans{color:var(--bad);font-family:Georgia,serif;font-style:italic}
+
+/* ===== Грамматика и тренажёр ударений ===== */
+.gr-nav{display:flex;gap:6px;flex-wrap:wrap;margin:0 0 18px}
+.gr-nav .tm{font-size:14.5px;padding:7px 14px}
+.gr-prose{max-width:none}
+.gr-prose h2{margin-top:0}
+.gr-rules{display:grid;gap:8px;margin:10px 0}
+.gr-rule{display:flex;gap:12px;align-items:flex-start;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:10px 14px}
+.gr-rule>b{flex:none;width:28px;height:28px;border-radius:50%;background:var(--acc);color:#fff;display:grid;place-items:center;font-size:14px}
+.gr-two{margin:8px 0}
+.gr-two .tr-card{padding:14px 18px}
+.gr-h{margin:0 0 6px;font-size:16px}
+.gr-h.good{color:var(--acc)}.gr-h.bad{color:var(--bad)}
+.gr-list{margin:0;padding-left:20px}
+.gr-list li{margin:7px 0}
+.gr-ex{font:italic 16.5px Georgia,serif;white-space:nowrap}
+.syl-word{display:inline-flex;align-items:baseline}
+.syl-s{position:relative}
+.syl-s.st{color:var(--acc);font-weight:700}
+.syl-s sub{font:normal 10px system-ui,sans-serif;color:var(--muted);margin-left:1px}
+.syl-d{color:var(--muted);margin:0 1px}
+.gr-table td.la{font:italic 600 16px Georgia,serif;color:var(--acc)}
+.syl-row{display:flex;justify-content:center;gap:6px;flex-wrap:wrap;margin:18px 0 6px}
+.syl{font:italic 600 28px Georgia,serif;min-width:58px;padding:10px 14px 14px;border:1.5px solid var(--line);border-radius:14px;background:var(--bg);color:var(--ink);position:relative;transition:border-color .15s,background .15s}
+.syl:hover:not(:disabled){border-color:var(--acc);color:var(--acc)}
+.syl sub{position:absolute;left:0;right:0;bottom:2px;font:normal 11px system-ui,sans-serif;color:var(--muted)}
+.syl:disabled{cursor:default}
+.syl.ok{background:var(--acc-soft);border-color:var(--acc);color:var(--acc)}
+.syl.bad{background:var(--bad-soft);border-color:var(--bad);color:var(--bad);text-decoration:line-through}
+.gr-ans{font:italic 700 20px Georgia,serif}
+.gr-hint{margin-top:6px;font-weight:600}
+.gr-why{text-align:left;color:var(--ink);margin:10px 0 12px;font-size:15px}
+.gr-why ol,.gr-steps{margin:6px 0 0;padding-left:22px}
+.gr-why li,.gr-steps li{margin:4px 0}
+#gr-fb .btn{display:block;margin:6px auto 4px}
+.gr-check{max-width:760px}
+.gr-check .tr-in{width:100%;margin-top:8px}
+.gr-res{border-top:1px solid var(--line);padding-top:12px;margin-top:12px}
+.gr-big{font:italic 700 28px Georgia,serif;color:var(--acc)}
+.gr-sylline{font:italic 19px Georgia,serif;margin:4px 0}
+.gr-seg{flex-direction:row!important;flex-wrap:wrap;gap:14px!important}
+.tr-bar.gr-static{position:static;background:none}
+.gr-why>b{font-family:inherit}

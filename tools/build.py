@@ -16,8 +16,22 @@ for f in sorted(glob.glob(os.path.join(HERE,'raw','*.txt'))):
             la,gr=m.group(1),m.group(2)
         else:
             la,gr=left,''
-        src=('Кравченко, словарь, с. %d'%page) if page else ('Городкова, словарь' if os.path.basename(f).startswith('g_') else 'Дополнения')
-        out.append({'la':la,'gr':gr,'ru':ru,'src':src})
+        base=os.path.basename(f)
+        extra={}
+        if base.startswith('s_abbr'):  # рецептурные сокращения: «Rp. — Recipe — возьми»
+            la,gr=left,''; extra={'abbr':True}
+        elif base.startswith('s_aphor'):  # афоризмы: перевод целиком, без деления по запятым
+            la,gr=left,''; extra={'whole':True}
+        elif base.startswith('s_') and ',' in la and ' ' in la:  # «misce, ut fiat pasta» — перевод целиком
+            extra={'whole':True}
+        if page: src='Кравченко, словарь, с. %d'%page
+        elif base.startswith('g_'): src='Городкова, словарь'
+        elif base.startswith('s_abbr'): src='Глоссарий СБМК, рецептурные сокращения'
+        elif base.startswith('s_aphor'): src='Глоссарий СБМК, афоризмы'
+        elif base.startswith('s_'): src='Глоссарий СБМК'
+        else: src='Дополнения'
+        e={'la':la,'gr':gr,'ru':ru,'src':src}; e.update(extra)
+        out.append(e)
 idx={e['la'].lower():e for e in out}
 tables=[]
 for l in open(os.path.join(HERE,'tables.txt'),encoding='utf8'):
@@ -30,7 +44,7 @@ for l in open(os.path.join(HERE,'elements.txt'),encoding='utf8'):
     t,el,ru=[x.strip() for x in l.split('|')]
     elements.append({'type':t,'el':el,'ru':ru})
 data={'entries':out,'tables':tables,'elements':elements,'missingPages':[]}
-js='/* Данные словаря. Источники: В.И. Кравченко «Латинский язык для медицинских колледжей и училищ», латинско-русский словарь (с. 327–363), и таблицы терминоэлементов; Ю.И. Городкова «Латинский язык (для медицинских и фармацевтических колледжей и училищ)», КНОРУС, 2017, латинско-русский словарь (с. 221–244) — слова, отсутствующие у Кравченко.\n   Формат записи: la — словарная форма, gr — грамматика (окончание род. п., род / формы прилагательного), ru — перевод, src — источник. */\nwindow.LATIN_DICT = '+json.dumps(data,ensure_ascii=False,indent=0)+';\n'
+js='/* Данные словаря. Источники: В.И. Кравченко «Латинский язык для медицинских колледжей и училищ», латинско-русский словарь (с. 327–363), и таблицы терминоэлементов; Ю.И. Городкова «Латинский язык (для медицинских и фармацевтических колледжей и училищ)», КНОРУС, 2017, латинско-русский словарь (с. 221–244) — слова, отсутствующие у Кравченко; Глоссарий СБМК (2026) — слова, сокращения и афоризмы, которых нет в учебниках.\n   Формат записи: la — словарная форма, gr — грамматика (окончание род. п., род / формы прилагательного), ru — перевод, src — источник. */\nwindow.LATIN_DICT = '+json.dumps(data,ensure_ascii=False,indent=0)+';\n'
 open(os.path.join(ROOT,'data','dictionary.js'),'w',encoding='utf8').write(js)
 print(len(out),len(tables),len(elements))
 missing=[t for t in tables if t['la'] and t['la'].lower() not in idx]

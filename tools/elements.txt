@@ -72,3 +72,49 @@ suffix | orth | правильный
 suffix | sclerosis | уплотнение
 suffix | stenosis | сужение
 suffix | spasmus | сокращение (спазм)
+suffix | kerat | роговица
+suffix | gynaec | женщина
+suffix | gloss | язык
+suffix | mast | грудная (молочная) железа
+suffix | blephar | веко
+suffix | somat | тело
+suffix | chol | желчь
+suffix | my/myos | мышца
+suffix | ophthalm | глаз
+suffix | pharmac | лекарство
+suffix | aden | железа
+suffix | ot | ухо
+suffix | derm/dermat | кожа
+suffix | pyel | почечная лоханка
+num | mono/mon | одно-, моно- (1)
+num | di | ди-, дву- (2)
+num | tri | три- (3)
+num | tetra | четырёх-, тетра- (4)
+num | penta | пяти-, пента- (5)
+num | hexa | шести-, гекса- (6)
+num | hepta/hept | семи-, гепта- (7)
+num | octa/oct | восьми-, окта- (8)
+num | ennea/non | девяти-, энне-; нон- (лат.) (9)
+num | deca/dec | десяти-, дек(а)- (10)
+num | undec | ундек- (11)
+num | dodec | додек- (12)
+num | tridec | тридек- (13)
+num | tetradec | тетрадек- (14)
+num | pentadec | пентадек- (15)
+num | bi | дву- (лат.)
+num | quadri | четырёх- (лат.)
+num | semi | пол-, полу- (лат.)
+drug | andr/test | препараты мужских половых гормонов
+drug | oestr/estr | препараты женских половых гормонов
+drug | cain | местноанестезирующие (местнообезболивающие)
+drug | cillin | антибиотики-пенициллины
+drug | mycin | антибиотики-стрептомицины
+drug | cyclin | антибиотики-тетрациклины
+drug | sulfa | антимикробные сульфаниламиды
+drug | io | йодсодержащие рентгеноконтрастные вещества
+drug | barb | снотворные, наркотические средства
+drug | cor/card | сердечные, кардиотонические
+drug | alg | болеутоляющие (анальгетики)
+drug | press/tens | антигипертензивные
+drug | pyr | жаропонижающие (антипиретики)
+drug | aesthes | обезболивающие (анестетики)
