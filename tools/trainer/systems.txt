@@ -1,0 +1,128 @@
+# Таблицы систем органов для тренажёра.
+# "## Название системы", далее строки: русское название | латинское название | греческий эквивалент | воспаление по-латински | воспаление по-русски | прочие термины
+# Пустая ячейка — нет значения. Варианты — через ";".
+## Мочеполовая система
+Почка | ren | nephr | nephritis | нефрит | нефроптоз
+Мочеточник | ureter | ureter | ureteritis | уретерит | уретеростеноз
+Мочевой пузырь | vesica urinaria | cyst | cystitis | цистит | цистоплегия
+Мочеиспускательный канал | urethra | urethr | urethritis | уретрит |
+Моча | urina | ur; uria | | |
+Азотистые вещества в крови | | uremia | | | уремия
+Мочекаменная болезнь | | urolithiasis | | | уролитиаз
+Половой член | penis | phalos | | |
+Предстательная железа | prostata | prostata | prostatitis | простатит |
+Яичко | testis | orch | orchitis | орхит |
+Придаток яичка | epididymus | epididym | epididymitis | эпидидимит |
+Влагалище | vagina | colp | colpitis | кольпит | кольпоскопия
+Матка | uterus | metr; hyster | metritis | метрит |
+Внутренний слой матки | endometrium | endometr | endometritis | эндометрит | эндометриоз
+Мышечный слой матки | myometrium | myometr | myometritis | миометрит |
+Наружный слой матки | perimetrium | perimetr | perimetritis | периметрит |
+Околоматочное пространство | parametrium | parametr | parametritis | параметрит |
+Маточная труба | tuba uterina | salping | salpingitis | сальпингит | сальпингэктомия
+Яичник | ovarium | oophor | oophoritis | оофорит | оофорома
+## Опорно-двигательная система
+Кость | os | oste | | | остеома
+Надкостница | periosteum | periost | periostitis | периостит |
+Хрящ | cartilago | chondr | chondritis | хондрит | остеохондроз
+Сустав | articulatio | arthr | arthritis | артрит | артроз
+Череп | cranium | | | |
+Позвонок | vertebra | spondyl | spondylitis | спондилит | спондилоартроз
+Лопатка | scapula | | | |
+Ребро | costa | | | |
+Ключица | clavicula | | | |
+Грудина | sternum | | | |
+Плечевая кость | humerus | brachium | | | торакобрахиальная повязка
+Лучевая кость | radius | | | |
+Локтевая кость | ulna | | | |
+Кисть | manus | chier | | | хирургия
+Палец | digitus | dactyl | | | дактилоскопия
+Таз | pelvis | coxae | | | коксидная повязка
+Бедро | femur | | | |
+Большая берцовая кость | tibia | | | |
+Малая берцовая кость | fibula | | | |
+Стопа | pes | pod | | | подальгия
+Костный мозг | myel | myel | myelitis | миелит | остеомиелит
+Вертел | trochanter | | | |
+## Желудочно-кишечный тракт
+Рот | os | stomat | stomatitis | стоматит | пародонтоз
+Зуб | dens | odont | periodontitis | периодонтит |
+Слюна | saliva | sialo | sialoadenitis | сиалоаденит | сиалостаз; саливация
+Глотка | pharynx | pharyng | pharyngitis | фарингит |
+Пищевод | oesophagus | oesophag | oesophagitis | эзофагит | эзофагоррагия
+Желудок | ventriculus | gastr | gastritis | гастрит | гастротомия
+12-перстная кишка | duodenum | duoden | duodenitis | дуоденит |
+Тонкая кишка | intestinum tenue | enter | enteritis | энтерит |
+Толстая кишка | intestinum crassum | col; colon | colitis | колит | колонотомия
+Слепая кишка | caecum | typhl | typhlitis | тифлит | тифлэктазия
+Придаток слепой кишки | appendix | appendic | appendicitis | аппендицит | аппендэктомия
+Сигмовидная кишка | romanus | sigmoid | sigmoiditis | сигмоидит |
+Прямая кишка | rectum | proct | proctitis | проктит | проктальгия
+Задний проход | anus | | | |
+Мышца запирающая | musculus sphincter | | | |
+Кал | faex | copr | | | копрограмма
+Промывание прямой кишки | klisma | klyster | | | клизма
+Осмотр прямой и сигмовидной кишок | rectoromanoscopia | | | | ректороманоскопия
+Осмотр толстого кишечника методом орошения | irrigoscopia | | | | ирригоскопия
+Печень | hepar | hepat | hepatitis | гепатит |
+Желчный пузырь | vesica fellea | cholecyst | cholecystitis | холецистит | холецистэктомия
+Поджелудочная железа | pancreas | pancreat | pancreatitis | панкреатит |
+Живот | abdomen | lapar | | | лапароскопия
+Брюшина | periton(a)eum; peritoneum; peritonaeum | periton | peritonitis | перитонит | пиоперитонит
+Извергание кала ртом | | coprolalia | | | ненормативная лексика
+Глотание | | phagia | | | афагия
+## Дыхательная система
+Нос | nasus | rhin | rhinitis | ринит | риноррагия
+Гортань | larynx | laryng | laryngitis | ларингит | ларингостеноз
+Трахея | trachea | trache | tracheitis | трахеит | трахеостомия
+Бронх | bronchus | bronch | bronchitis | бронхит | бронхэктомия
+Лёгкое | pulmo | pneumo | pneumonia | пневмония | пневмография
+Плевра | pleura | pleur | pleuritis | плеврит |
+Дыхание | | pnoe | | |
+Отсутствие дыхания | | apnoe | | |
+Учащение дыхания | | tachypnoe | | | тахипноэ
+Замедление дыхания | | bradypnoe | | | брадипноэ
+Расстройство дыхания | | dyspnoe | | | диспноэ
+Грудная клетка | thorax | thorac | | | торакотомия
+Воздух в грудной клетке | pneumothorax | | | | пневмоторакс
+Кровь в грудной клетке | haemothorax | | | | гемоторакс
+Вода в грудной клетке | hydrothorax | | | | гидроторакс
+Гной в грудной клетке | pyothorax | | | | пиоторакс
+Расширение бронхов | | bronchectasia | | | бронхэктазия
+Расширение лёгких воздухом | | emphysema | | | эмфизема
+Мокрота | | sputum | | |
+Кашель | | tussis | | |
+Кровохарканье | | haemopnoe | | | гемопноэ
+## Сердечно-сосудистая система
+Сердце | cor | cardia | carditis | кардит |
+Внутренняя оболочка сердца | endocardium | endocard | endocarditis | эндокардит |
+Наружная оболочка сердца | epicardium | epicard | epicarditis | эпикардит |
+Мышечная оболочка сердца | myocardium | myocard | myocarditis | миокардит |
+Околосердечная сумка | pericardium | pericard | pericarditis | перикардит |
+Вода в околосердечной сумке | | hydropericardium | | | гидроперикард
+Кровь в околосердечной сумке | | haemopericardium | | | гемоперикард
+Кровь | sanguis | haem(o); haemat; -aemia | | |
+Кровь в моче | | haematuria | | | гематурия
+Сокращение сердца | | systole | | | систола
+Расслабление сердца | | diastole | | | диастола
+Нарушение ритма сердечных сокращений | | extrasystolia | | | экстрасистолия
+Учащение сердцебиения | | tachycardia | | | тахикардия
+Замедление сердцебиения | | bradycardia | | | брадикардия
+Сосуд | vas | angio | angiitis | ангиит | ангиома
+Вена | vena | phleb | phlebitis | флебит | тромбофлебит
+Предсердие | atrium | | | | атриовентрикулярное отверстие
+Желудочек | ventriculus | | | |
+Селезёнка | lien | splen | | | спленомегалия
+## Нервная система
+Голова | caput | cephal | | |
+Головной мозг | cerebrum | encephal | | |
+Мозговые оболочки | meninges | mening | | |
+Твёрдая мозговая оболочка | dura mater | | | |
+Мягкая мозговая оболочка | pia mater | | | |
+Нерв | nervus | neur | | |
+Ум | mens | phren | | |
+Слабоумие (без ума) | dementia | | | |
+Память | memoria | mnes; mnesia | | |
+Безумие | | mania | | |
+Ощущение | | aesthesia | | |
+Чувство | | pathia | | |

@@ -584,7 +584,7 @@
   /* ================= Интерфейс ================= */
   function debounce(fn, ms) { let t; return (...a) => { clearTimeout(t); t = setTimeout(() => fn(...a), ms); }; }
   function setTab(name) {
-    $$('.tab').forEach(t => t.classList.toggle('on', t.dataset.tab === name));
+    $$('.tab').forEach(t => { t.classList.toggle('on', t.dataset.tab === name); if (t.dataset.tab === name && t.scrollIntoView) t.scrollIntoView({ block: 'nearest', inline: 'nearest' }); });
     $$('.panel').forEach(p => p.hidden = p.id !== 'p-' + name);
     if (name === 'dict') renderDict();
     if (location.hash !== '#' + name) history.replaceState(null, '', '#' + name);
@@ -628,7 +628,7 @@
     $$('#dict-letters button').forEach(b => b.onclick = () => { const on = b.classList.contains('on'); $$('#dict-letters button').forEach(x => x.classList.remove('on')); if (!on) b.classList.add('on'); $('#dict-q').value = ''; dictLimit = 120; renderDict(); });
     renderElements();
     const h = location.hash.slice(1);
-    setTab(['la', 'ru', 'dict', 'el', 'about'].includes(h) ? h : 'la');
+    setTab(['la', 'ru', 'dict', 'el', 'train', 'about'].includes(h) ? h : 'la');
     runLa(); runRu();
   }
   window.Translator = { translateLa, translateRu, buildLatin, entries, laIndex, decompose };
