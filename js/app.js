@@ -581,8 +581,8 @@
     });
     const secs = [...new Set(RAW.tables.map(t => t.sec))];
     secs.forEach(s => {
-      html += '<h3>' + esc(s) + '</h3><table class="par tbl"><thead><tr><th>Русский</th><th>Латинский</th><th>Греческий элемент</th><th>Примеры</th></tr></thead><tbody>' +
-        RAW.tables.filter(t => t.sec === s).map(t => '<tr><td>' + esc(t.ru) + '</td><td>' + esc(t.la || '—') + '</td><td><i>' + esc(t.el || '') + '</i></td><td>' + esc(t.note || '') + '</td></tr>').join('') + '</tbody></table>';
+      html += '<h3>' + esc(s) + '</h3><div class="tr-scroll"><table class="par tbl"><thead><tr><th>Русский</th><th>Латинский</th><th>Греческий элемент</th><th>Примеры</th></tr></thead><tbody>' +
+        RAW.tables.filter(t => t.sec === s).map(t => '<tr><td>' + esc(t.ru) + '</td><td>' + esc(t.la || '—') + '</td><td><i>' + esc(t.el || '') + '</i></td><td>' + esc(t.note || '') + '</td></tr>').join('') + '</tbody></table></div>';
     });
     $('#el-body').innerHTML = html;
   }
@@ -592,12 +592,28 @@
   function setTab(name) {
     $$('.tab').forEach(t => { t.classList.toggle('on', t.dataset.tab === name); if (t.dataset.tab === name && t.scrollIntoView) t.scrollIntoView({ block: 'nearest', inline: 'nearest' }); });
     $$('.panel').forEach(p => p.hidden = p.id !== 'p-' + name);
+    $$('.mnav-b').forEach(b => b.classList.toggle('on', (b.dataset.group || b.dataset.go).split(' ').includes(name)));
+    const sh = $('#msheet'); if (sh) sh.hidden = true;
+    if (window.matchMedia && matchMedia('(max-width:720px)').matches && init.done) window.scrollTo(0, 0);
     if (name === 'dict') renderDict();
     if (location.hash !== '#' + name) history.replaceState(null, '', '#' + name);
   }
   function init() {
     $('#stat-words').textContent = entries.length;
     $$('.tab').forEach(t => t.onclick = () => setTab(t.dataset.tab));
+    // нижняя навигация (телефоны)
+    let lastTr = 'la';
+    $$('.mnav-b').forEach(b => b.onclick = () => {
+      const cur = location.hash.slice(1);
+      if (b.hasAttribute('data-more')) { $('#msheet').hidden = !$('#msheet').hidden; return; }
+      if (b.dataset.go === 'la') { if (cur === 'la' || cur === 'ru') lastTr = cur; setTab(cur === 'la' || cur === 'ru' ? cur : lastTr); return; }
+      if (cur === 'la' || cur === 'ru') lastTr = cur;
+      setTab(b.dataset.go);
+    });
+    $('#msheet').addEventListener('click', ev => { if (ev.target.id === 'msheet') $('#msheet').hidden = true; });
+    // клавиатура на телефоне: прячем нижнюю панель, пока вводится текст
+    document.addEventListener('focusin', ev => { if (ev.target.matches('input[type=search],input:not([type]),textarea,.tr-in')) document.body.classList.add('kb'); });
+    document.addEventListener('focusout', () => setTimeout(() => { if (!document.activeElement || !document.activeElement.matches('input,textarea')) document.body.classList.remove('kb'); }, 50));
     const laIn = $('#la-in'), ruIn = $('#ru-in');
     const runLa = () => renderLa(translateLa(laIn.value));
     const runRu = () => { ruItems = translateRu(ruIn.value); renderRu(); };
@@ -636,6 +652,7 @@
     const h = location.hash.slice(1);
     setTab(['la', 'ru', 'dict', 'el', 'gram', 'train', 'about'].includes(h) ? h : 'la');
     runLa(); runRu();
+    init.done = true;
   }
   window.Translator = { translateLa, translateRu, buildLatin, entries, laIndex, decompose };
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init); else init();

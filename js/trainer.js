@@ -53,11 +53,58 @@
       m[i][j] = Math.min(m[i - 1][j] + 1, m[i][j - 1] + 1, m[i - 1][j - 1] + (a[i - 1] === b[j - 1] ? 0 : 1));
     return m[a.length][b.length];
   }
+  /* Латынь с грамматикой: «os, ossis, n», «os, ossis», «os ossis», «os, -is, n», «acidum, acidi, n» —
+     словарная форма обязательна, грамматика (род. п. и род) — по желанию, в любом из принятых видов записи. */
+  const GEN_RE = /^[mfn]$/;
+  function gramTokOk(t, g) {
+    if (t === g) return true;
+    if (GEN_RE.test(t) || GEN_RE.test(g)) return false;
+    if (t.length >= 2 && g.endsWith(t)) return true;      // ossis ← ssis / sis / is
+    if (g.length >= 1 && t.endsWith(g) && t.length > g.length) return true; // acidi ← i
+    return false;
+  }
+  function laGramMatch(answer, input) {
+    const toks = s => normLa(s).split(/[\s,]+/).filter(Boolean);
+    const inp = toks(input);
+    return variants(answer).some(v => {
+      const parts = v.split(',');
+      const lemma = toks(parts[0]);
+      const gram = toks(parts.slice(1).join(' '));
+      if (!lemma.length || inp.length < lemma.length) return false;
+      for (let i = 0; i < lemma.length; i++) if (inp[i] !== lemma[i]) return false;
+      let j = 0;
+      for (const t of inp.slice(lemma.length)) {
+        while (j < gram.length && !gramTokOk(t, gram[j])) j++;
+        if (j >= gram.length) return false;
+        j++;
+      }
+      return true;
+    });
+  }
   function check(card, input) {
     const n = card.lang === 'la' ? normLa(input) : normRu(input);
     if (!n) return { ok: false, close: false };
     const acc = card.lang === 'la' ? laAnswers(card.answer) : ruAnswers(card.answer);
     if (acc.includes(n)) return { ok: true };
+    if (card.lang === 'la' && laGramMatch(card.answer, input)) return { ok: true };
+    if (card.lang === 'la') { // написали только родительный падеж: ossis вместо os
+      const v = variants(card.answer).find(v => v.includes(','));
+      if (v) {
+        const lem = normLa(v.split(',')[0]), g = normLa(v.split(',')[1] || '').replace(/\s+/g, '');
+        // род. п. дан в словаре полностью (os, ossis; lac, lactis) — засчитываем с подсказкой
+        if (g && !GEN_RE.test(g) && n === g && g.slice(0, 2) === lem.slice(0, 2)) return { ok: true, note: g + ' — это родительный падеж; словарная запись: ' + v.trim() };
+      }
+      // ответ без грамматики (системы органов: «os») — берём род. п. из словаря сайта
+      const T = window.Translator;
+      if (T && T.entries) for (const v2 of variants(card.answer)) {
+        const lem = normLa(v2.split(',')[0]);
+        const cands = T.entries.filter(e => normLa(e.la) === lem && e.info && e.info.pos === 'noun' && e.info.genFull);
+        const q = normRu(card.q || '');
+        const e = cands.length > 1 ? cands.find(e => q && normRu(e.ru).includes(q)) : cands[0]; // os: «рот» (oris) или «кость» (ossis)
+        if (e && normLa(e.info.genFull) === n && e.info.genFull.slice(0, 2).toLowerCase() === e.la.slice(0, 2).toLowerCase() && e.info.decl === 3)
+          return { ok: true, note: n + ' — это родительный падеж; словарная запись: ' + e.la + ', ' + e.gr };
+      }
+    }
     const close = acc.some(x => x.length >= 4 && lev(x, n) === 1);
     return { ok: false, close };
   }
@@ -218,7 +265,7 @@
     s.waiting = true;
     const fb = $('#tr-fb');
     fb.className = 'tr-fb ' + (r.ok ? 'good' : 'bad');
-    fb.innerHTML = r.ok ? '✓ Верно! <span class="muted">' + esc(c.show) + '</span>'
+    fb.innerHTML = r.ok ? '✓ Верно! <span class="muted">' + esc(c.show) + '</span>' + (r.note ? '<div class="small">' + esc(r.note) + '</div>' : '')
       : (val.trim() ? (r.close ? '≈ Почти — проверьте написание. ' : '✗ Неверно. ') : 'Правильный ответ: ') + '<b>' + esc(c.show) + '</b>' + (val.trim() ? ' <button class="link" id="tr-accept">мой ответ тоже верный — засчитать</button>' : '');
     fb.innerHTML += '<div class="muted small">Enter — дальше</div>';
     const acc = $('#tr-accept'); if (acc) acc.onclick = () => { rec.ok = true; rec.accepted = true; next(); };
