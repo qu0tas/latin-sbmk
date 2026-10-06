@@ -142,7 +142,8 @@
       put(p, 'gen', 'pl', stem + (comp ? 'um' : 'ium')); put(p, 'dat', 'pl', stem + 'ibus'); put(p, 'abl', 'pl', stem + 'ibus');
       return p;
     };
-    return { type: comp ? 'comp' : 'adj3', stem, m: mk(la, 'm'), f: mk(la, 'f'), n: mk(neutNom, 'n'), neut: neutNom, fem: la };
+    const femNom = (opts && opts.fem) || la;
+    return { type: comp ? 'comp' : 'adj3', stem, m: mk(la, 'm'), f: mk(femNom, 'f'), n: mk(neutNom, 'n'), neut: neutNom, fem: femNom };
   }
 
   /* ---------- Глаголы ---------- */
@@ -191,14 +192,14 @@
   const PERS = ['1 л. ед. ч.', '2 л. ед. ч.', '3 л. ед. ч.', '1 л. мн. ч.', '2 л. мн. ч.', '3 л. мн. ч.'];
 
   /* ---------- Анализ словарной статьи ---------- */
-  const PREP_CASE = { ad: ['acc'], ante: ['acc'], contra: ['acc'], inter: ['acc'], per: ['acc'], post: ['acc'], cum: ['abl'], sine: ['abl'], pro: ['abl'], e: ['abl'], ex: ['abl'], de: ['abl'], in: ['abl', 'acc'], sub: ['abl', 'acc'] };
+  const PREP_CASE = { a: ['abl'], ab: ['abl'], prae: ['abl'], apud: ['acc'], extra: ['acc'], infra: ['acc'], intra: ['acc'], supra: ['acc'], ad: ['acc'], ante: ['acc'], contra: ['acc'], inter: ['acc'], per: ['acc'], post: ['acc'], cum: ['abl'], sine: ['abl'], pro: ['abl'], e: ['abl'], ex: ['abl'], de: ['abl'], in: ['abl', 'acc'], sub: ['abl', 'acc'] };
 
   function analyzeEntry(e) {
     const la = e.la.replace(/[«»]/g, '').trim();
     const gr = (e.gr || '').trim();
     const info = { pos: 'other', la, gr };
+    if (/^предл\./.test(e.ru)) { info.pos = 'prep'; info.forms = la.split(/,\s*/); info.governs = PREP_CASE[normLa(info.forms[0])] || []; return info; }
     if (/\s/.test(la)) { info.pos = 'phrase'; return info; }
-    if (/^предл\./.test(e.ru)) { info.pos = 'prep'; info.forms = la.split(/,\s*/); info.governs = PREP_CASE[normLa(la)] || []; return info; }
     if (!gr) {
       if (/^нар\./.test(e.ru)) { info.pos = 'adv'; return info; }
       if (/нескл\./.test(e.ru)) { info.pos = 'indecl'; return info; }
@@ -234,6 +235,12 @@
       return info;
     }
     // прилагательные
+    if (rest.length === 2 && /is$/i.test(rest[0]) && /e$/i.test(rest[1])) { // acer, acris, acre
+      const fem = rest[0].startsWith('-') ? joinEnding(la, rest[0].slice(1)) : rest[0];
+      const neut = rest[1].startsWith('-') ? joinEnding(la, rest[1].slice(1)) : rest[1];
+      Object.assign(info, { pos: 'adj' }, adj3(la, neut, fem.replace(/is$/i, ''), { fem }));
+      return info;
+    }
     if (rest.length === 2) {
       const fem = joinEnding(la, rest[0].slice(1));
       Object.assign(info, { pos: 'adj' }, adj12(la, fem));

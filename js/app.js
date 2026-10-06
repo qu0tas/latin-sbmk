@@ -61,7 +61,7 @@
   /* ---------- Русский индекс ---------- */
   function cleanRu(ru) {
     return ru.replace(/предл\.\s*с\s*(acc\.|abl\.)(\s*и\s*(acc\.|abl\.))?/g, '')
-      .replace(/\b(нар|нескл)\.\s*/g, '').replace(/фарм\.\s*/g, '').replace(/\(сравн\. степень\)/g, '').trim();
+      .replace(/^(глаг|местоим|числ|союз)\.?(\s*\([^)]*\))?\s*;\s*/, '').replace(/\b(нар|нескл)\.\s*/g, '').replace(/фарм\.\s*/g, '').replace(/\(сравн\. степень\)/g, '').trim();
   }
   function senses(e) {
     const out = [];
@@ -309,6 +309,22 @@
 
   /* ================= Русский → латынь ================= */
   function tokenizeRu(text) { return (M.normRu(text).match(/[а-я]+(?:-[а-я]+)*/g) || []); }
+  const fmCache = new Map();
+  function ruFormsOf(d) {
+    if (fmCache.has(d)) return fmCache.get(d);
+    const set = new Set([d]);
+    try {
+      ['nom', 'gen', 'dat', 'acc', 'ins', 'prep'].forEach(c => ['sg', 'pl'].forEach(n => {
+        if (M.isRuAdj(d)) ['m', 'f', 'n'].forEach(g => set.add(M.ruAdjForm(d, g, c, n)));
+        else set.add(M.ruNounForm(d, c, n));
+      }));
+    } catch (e) { /* ignore */ }
+    fmCache.set(d, set); return set;
+  }
+  function formMatch(c, ws) {
+    if (c.words.length !== ws.length) return 1;
+    return ws.every((w, j) => ruFormsOf(c.words[j]).has(w)) ? 0 : 1;
+  }
   function rankCands(list, inputWords) {
     const inp = inputWords.join(' ');
     const seen = new Set();
@@ -317,6 +333,10 @@
       if (pa !== pb) return pa - pb;
       const ea = a.words.join(' ') === inp ? 0 : 1, eb = b.words.join(' ') === inp ? 0 : 1;
       if (ea !== eb) return ea - eb;
+      const fa = formMatch(a, inputWords), fb = formMatch(b, inputWords);
+      if (fa !== fb) return fa - fb;
+      const sa = /^Городкова/.test(a.e.src) ? 1 : 0, sb = /^Городкова/.test(b.e.src) ? 1 : 0; // основной учебник — Кравченко
+      if (sa !== sb) return sa - sb;
       if (a.prio !== b.prio) return a.prio - b.prio;
       const ta = a.e.el ? 0 : 1, tb = b.e.el ? 0 : 1;
       if (ta !== tb) return ta - tb;
