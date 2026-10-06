@@ -318,6 +318,8 @@
       const ea = a.words.join(' ') === inp ? 0 : 1, eb = b.words.join(' ') === inp ? 0 : 1;
       if (ea !== eb) return ea - eb;
       if (a.prio !== b.prio) return a.prio - b.prio;
+      const ta = a.e.el ? 0 : 1, tb = b.e.el ? 0 : 1;
+      if (ta !== tb) return ta - tb;
       return a.e.ru.length - b.e.ru.length;
     }).filter(c => { if (seen.has(c.e.id)) return false; seen.add(c.e.id); return true; });
   }

@@ -1,0 +1,46 @@
+gastrorrhagia, -ae, f — гастроррагия (желудочное кровотечение)
+gastrotomia, -ae, f — гастротомия (вскрытие полости желудка)
+gastroscopia, -ae, f — гастроскопия (осмотр слизистой оболочки желудка)
+gelatinosus, -a, -um — желатиновый
+gemma, -ae, f — почка (растения)
+geniculatus, -a, -um — коленчатый
+Gentiana, -ae, f — горечавка
+genu, -us, n — колено
+genus, -eris, n — род, племя, образ
+gigantismus, -i, m — гигантизм, гигантский рост
+gingiva, -ae, f — десна
+gingivectomia, -ae, f — гингивэктомия (иссечение края десны)
+gingivitis, -idis, f — гингивит (воспаление десны)
+gingivotomia, -ae, f — гингивотомия (рассечение десны)
+glandula, -ae, f — железа
+glandularis, -e — железистый
+globus, -i, m — шар
+globulus, -i, m — шарик
+glottis, -idis, f — голосовая щель
+gluconas, -atis, m — глюконат
+Glucosum, -i, n — глюкоза
+glucosuria, -ae, f — глюкозурия (наличие глюкозы в моче)
+gluteus, -a, -um — ягодичный
+Glycerinum, -i, n — глицерин
+Glycyrrhiza, -ae, f — солодка
+glykaemia, -ae, f — гликемия (содержание глюкозы в крови)
+granulosus, -a, -um — зернистый
+granulum, -i, n — гранула
+gravida, -ae, f — беременная
+graviditas, -atis, f — беременность
+graviditas extrauterina — внематочная беременность
+gutta, -ae, f — капля
+gynaecologia, -ae, f — гинекология
+gyrus, -i, m — извилина
+habenula, -ae, f — поводок (парное образование эпиталамуса, соединяющее эпифиз с промежуточным мозгом)
+haema, -atis, n — кровь
+haemangioma, -atis, n — гемангиома (опухоль из кровеносных сосудов)
+haematologia, -ae, f — гематология (наука о болезнях крови и кроветворных органов)
+haematuria, -ae, f — гематурия (наличие крови в моче)
+haemolysis, -is, f — гемолиз (разрушение эритроцитов)
+haemopoesis, -is, f — гемопоэз, кроветворение
+haemorrhagia, -ae, f — геморрагия (1 — кровоизлияние; 2 — кровотечение)
+haemorrhagicus, -a, -um — геморрагический (1 — сопровождающийся кровотечением; 2 — вызывающий кровотечение)
+haemostasis, -is, f — гемостаз (1 — остановка кровотечения; 2 — прекращение кровотока на отдельном участке тела)
+haemothorax, -acis, m — гемоторакс (скопление крови в плевральной полости)
+hallux, -ucis, m — большой палец стопы
