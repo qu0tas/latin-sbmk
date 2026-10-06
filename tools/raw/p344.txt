@@ -1,0 +1,49 @@
+hypothalamus, -i, m — гипоталамус, подбугорье
+hypothermia, -ae, f — гипотермия (переохлаждение организма)
+hypotonia, -ae, f — гипотония (снижение тонуса)
+hypoxaemia, -ae, f — гипоксемия (пониженное содержание кислорода в крови)
+hypoxia, -ae, f — гипоксия (пониженное содержание кислорода в тканях)
+hystericus, -a, -um — истерический
+hysterocele, -es, f — гистероцеле, грыжа матки
+hysteropexia, -ae, f — гистеропексия (фиксация подвижной матки)
+hysteroptosis, -is, f — гистероптоз (опущение матки)
+hysterorrhaphia, -ae, f — гистерорафия (сшивание стенок матки)
+hysterorrhexis, -is, f — гистерорексис (разрыв беременной матки)
+hysterotomia, -ae, f — гистеротомия (рассечение матки)
+Ichthyolum, -i, n — ихтиол
+imperfectus, -a, -um — несовершенный
+impressio, -onis, f — вдавление
+in — предл. с acc. и abl. в, на
+incisivus, -a, -um — резцовый
+incisura, -ae, f — вырезка
+inclinatio, -onis, f — наклон
+incus, -udis, f — наковальня (одна из слуховых косточек)
+index, -icis, m — указательный палец
+infans, -ntis, m, f — дитя, ребенок
+infantilis, -e — детский
+infantilismus, -i, m — инфантилизм
+infectio, -onis, f — инфекция (заражение)
+inferior, -ius — нижний
+infraclavicularis, -e — подключичный
+infraglenoidalis, -e — подсуставной
+infraorbitalis, -e — подглазничный
+infrapatellaris, -e — поднадколенниковый
+infraspinatus, -a, -um — подостный
+infusum, -i, n — настой
+inguen, -inis, n — пах
+inguinalis, -e — паховый
+inhalatio, -onis, f — ингаляция
+initialis, -e — начальный
+injectio, -onis, f — инъекция
+insula, -ae, f — островок
+insulinicus, -a, -um — инсулиновый
+intentio, -onis, f — натяжение
+inter — предл. с acc. между
+interalveolaris, -e — межальвеолярный
+intercostalis, -e — межреберный
+interlobaris, -e — междолевой
+intermuscularis, -e — межмышечный
+internus, -a, -um — внутренний
+interosseus, -a, -um — межкостный
+interspinalis, -e — межостистый
+interstitialis, -e — промежуточный

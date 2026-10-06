@@ -1,0 +1,33 @@
+electroencephalographia, -ae, f — электроэнцефалография
+elephantiasis, -is, f — элефантиаз, слоновость
+embolia, -ae, f — эмболия (закупорка кровеносного сосуда)
+embolicus, -a, -um — эмболический
+embryo, -onis, m — эмбрион
+embryologia, -ae, f — эмбриология (наука о развитии зародыша)
+eminentia, -ae, f — возвышение
+emissarius, -a, -um — эмиссарный (выпускающий, выводящий)
+emplastrum, -i, n — пластырь
+empyema, -atis, n — эмпиема (скопление гноя в естественной полости)
+emulsum, -i, n — эмульсия
+enamelum, -i, n — эмаль
+encephalitis, -idis, f — энцефалит (воспаление головного мозга)
+encephalon, -i, n — головной мозг
+encephalopathia, -ae, f — энцефалопатия
+endocarditis, -idis, f — эндокардит (воспаление внутренней оболочки сердца)
+endocrinus, -a, -um — эндокринный
+endometritis, -idis, f — эндометрит (воспаление слизистой оболочки матки)
+endophlebitis, -idis, f — эндофлебит (воспаление внутренней оболочки вены)
+endothelium, -i, n — эндотелий
+enteroduodenostomia, -ae, f — энтеродуоденостомия
+enteroenterostomia, -ae, f — энтероэнтеростомия
+enterolithus, -i, m — энтеролит (кишечный камень)
+enteroproctostomia, -ae, f — энтеропроктостомия
+enterorrhaphia, -ae, f — энтерорафия (ушивание раны кишки)
+enterospasmus, -i, m — энтероспазм
+ependyma, -atis, n — эпендима
+epidemicus, -a, -um — эпидемический
+epidermis, -is, f — эпидермис (поверхностный слой кожи)
+epididymis, -idis, f — придаток яичка
+epiglottis, -idis, f — надгортанник
+epiphysis, -is, f — эпифиз (расширенный конец трубчатой кости)
+epithelium, -i, n — эпителий

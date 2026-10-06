@@ -1,0 +1,42 @@
+persistens, -ntis — стойкий
+pes, pedis, m — стопа, нога
+petrosus, -a, -um — каменистый
+phalanx, -ngis, f — фаланга
+pharmacotherapia, -ae, f — фармакотерапия (лечение лекарственными средствами)
+pharyngitis, -idis, f — фарингит (воспаление слизистой оболочки глотки)
+pharyngoscopia, -ae, f — фарингоскопия (осмотр глотки)
+pharyngotomia, -ae, f — фаринготомия (вскрытие глотки)
+pharynx, -ngis, m — глотка
+Phenolum, -i, n — фенол
+Phenylinum, -i, n — фенилин
+philtrum, -i, n — губной желобок
+phlebectasia, -ae, f — флебэктазия (стойкое расширение вены)
+phlebectomia, -ae, f — флебэктомия (удаление вены)
+phlebogramma, -atis, n — флебограмма
+phlebographia, -ae, f — флебография
+phlebolithus, -i, m — флеболит, венный камень
+phlebolysis, -is, f — флеболиз
+phlebotomia, -ae, f — флеботомия (вскрытие вены)
+phosphas, -atis, m — фосфат
+phrenicus, -a, -um — диафрагмальный
+phthisiatria, -ae, f — фтизиатрия (наука о лечении туберкулеза)
+physiologicus, -a, -um — физиологический
+physiotherapia, -ae, f — физиотерапия
+phytotherapia, -ae, f — фитотерапия (лечение лекарственными растениями)
+Pilocarpinum, -i, n — пилокарпин
+pilus, -i, m — волос
+pix, picis, f — смола
+Pix liquida — деготь
+planta, -ae, f — растение
+Plantago, -inis, f — подорожник
+planus, -a, -um — плоский
+plasma, -atis, n — плазма (жидкая часть крови)
+plastica, -ae, f — пластическая операция
+platysma, -atis, n — подкожная мышца шеи
+pleura, -ae, f — плевра
+plexus, -us, m — сплетение
+plica, -ae, f — складка
+pneumaticus, -a, -um — пневматический
+pneumolysis, -is, f — пневмолиз
+pneumonectomia, -ae, f — пневмонэктомия (полное удаление легкого)
+pneumothorax, -acis, m — пневмоторакс (скопление воздуха в плевральной полости)

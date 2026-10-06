@@ -1,0 +1,49 @@
+thrombocytopoesis, -is, f — тромбоцитопоэз (образование тромбоцитов)
+thrombophlebitis, -idis, f — тромбофлебит (воспаление вены с образованием тромба)
+thrombosis, -is, f — тромбоз (образование тромба)
+thrombus, -i, m — тромб (кровяной сгусток, образующийся в кровеносном сосуде)
+thymus, -i, m — тимус, вилочковая железа
+thyroideus, -a, -um — щитовидный
+tibia, -ae, f — большеберцовая кость
+tinctura, -ae, f — настойка
+tonsilla, -ae, f — миндалина
+topographicus, -a, -um — топографический
+Tormentilla, -ae, f — лапчатка
+totalis, -e — общий, полный
+toxicologia, -ae, f — токсикология (наука о ядовитых веществах)
+toxicometria, -ae, f — токсикометрия (количественная оценка токсичности химических веществ)
+toxicosis, -is, f — токсикоз (состояние, вызванное отравлением)
+trachea, -ae, f — трахея
+tractus, -us, m — тракт, путь
+transplantatio, -onis, f — трансплантация (пересадка органа или ткани)
+transversalis, -e — поперечный
+transversospinalis, -e — поперечно-остистый
+transversus, -a, -um — поперечный
+trauma, -atis, n — травма, повреждение
+traumaticus, -a, -um — травматический
+tremor, -oris, m — дрожание
+trepanatio, -onis, f — трепанация (вскрытие костной полости)
+triangularis, -e — треугольный
+trichopathia, -ae, f — трихопатия (общее название патологических изменений волос)
+trigeminus, -a, -um — тройничный
+Trimecainum, -i, n — тримекаин
+Trimethinum, -i, n — триметин
+Trioxazinum, -i, n — триоксазин
+triquetrus, -a, -um — трехгранный
+trismus, -i, m — тризм (спастическое стискивание челюстей)
+Triticum, -i, n — пшеница
+trochanter, -eris, m — вертел (бугор на верхнем конце бедренной кости)
+trochlearis, -e — блоковый
+truncus, -us, m — ствол, туловище
+tuba, -ae, f — труба
+tubarius, -a, -um — трубный
+tuber, -eris, n — бугор
+tuberculosis, -is, f — туберкулез (болезнь, характеризующаяся образованием специфических гранулем в различных органах и тканях)
+tuberculum, -i, n — бугорок
+tuberositas, -atis, f — бугристость
+tumor, -oris, m — опухоль
+tunica, -ae, f — оболочка
+tussis, -is, f — кашель
+tympanicus, -a, -um — барабанный
+tympanum, -i, n — барабан
+typhlectasia, -ae, f — тифлэктазия (расширение слепой кишки)

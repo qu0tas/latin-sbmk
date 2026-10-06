@@ -1,0 +1,36 @@
+Hydrargyrum, -i, n — ртуть
+hydrocarbonas, -atis, m — гидрокарбонат
+hydrocephalia, -ae, f — гидроцефалия (водянка головного мозга)
+hydrochloridum, -i, n — гидрохлорид
+Hydrogenium, -i, n — водород
+hydropericardium, -i, n — гидроперикард (водянка перикарда)
+hydrophthalmus, -i, m — гидрофтальм (водянка глаза)
+hydrops, -opis, m — водянка
+hydrosalpinx, -ngis, f — гидросальпинкс (водянка маточной трубы)
+hydrotherapia, -ae, f — гидротерапия, водолечение
+hygiena, -ae, f — гигиена
+hymen, -enis, m — девственная плева
+hyoideus, -a, -um — подъязычный
+Hyoscyamus, -i, m — белена
+hypaesthesia, -ae, f — гипестезия (понижение чувствительности)
+hyperaemia, -ae, f — гиперемия (увеличенное кровенаполнение)
+hyperesthesia, -ae, f — гиперестезия (повышенная чувствительность)
+hyperchylia, -ae, f — гиперхилия (повышенная секреция желудочного сока)
+hyperergia, -ae, f — гиперергия (повышенная реактивность организма)
+hyperglykaemia, -ae, f — гипергликемия (повышенное содержание глюкозы в крови)
+hyperkinesia, -ae, f — гиперкинезия
+hypermnesia, -ae, f — гипермнезия (резкое обострение памяти)
+hypersalivatio, -onis, f — гиперсаливация (усиленная секреция слюнных желез)
+hypertensio, -onis, f — гипертензия (повышенное давление)
+hyperthermia, -ae, f — гипертермия (перегревание организма)
+hypertonia, -ae, f — гипертония (увеличение тонуса)
+hypocholia, -ae, f — гипохолия (пониженная секреция желчи)
+hypochondrium, -i, n — подреберье
+hypogastrium, -i, n — подчревье
+hypoglossus, -a, -um — подъязычный
+hypoglykaemia, -ae, f — гипогликемия (пониженное содержание глюкозы в крови)
+hyponychium, -i, n — подногтевая пластинка
+hypophysialis, -e — гипофизарный
+hypophysis, -is, f — гипофиз (придаток мозга)
+hypoplasia, -ae, f — гипоплазия (недоразвитие)
+hypotensio, -onis, f — гипотензия (пониженное давление)

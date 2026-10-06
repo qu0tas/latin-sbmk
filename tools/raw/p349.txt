@@ -1,0 +1,38 @@
+myelitis, -idis, f — миелит (воспаление спинного мозга)
+myelocele, -es, f — миелоцеле (спинномозговая грыжа)
+myelofibrosis, -is, f — миелофиброз
+myelographia, -ae, f — миелография
+myelopathia, -ae, f — миелопатия
+myelotomia, -ae, f — миелотомия (рассечение спинного мозга)
+myocardiodystrophia, -ae, f — миокардиодистрофия
+myocarditis, -idis, f — миокардит (воспаление сердечной мышцы)
+myocardium, -i, n — миокард (сердечная мышца)
+myologia, -ae, f — миология
+myoma, -atis, n — миома (опухоль из мышечной ткани)
+myometrium, -i, n — миометрий (мышечная оболочка матки)
+myopathia, -ae, f — миопатия
+myositis, -idis, f — миозит (воспаление скелетных мышц)
+myotonicus, -a, -um — миотонический
+naevus, -i, m — невус, родимое пятно
+narcosis, -is, f — наркоз
+nasalis, -e — носовой
+nasofrontalis, -e — носолобный
+nasolabialis, -e — носогубный
+nasolacrimalis, -e — носослезный
+nasus, -i, m — нос
+Natrium, -i, n — натрий
+natura, -ae, f — природа
+naturalis, -e — естественный
+Neomycinum, -i, n — неомицин
+neonatus, -i, m — новорожденный
+nephrectomia, -ae, f — нефрэктомия (удаление почки)
+nephrolithiasis, -is, f — нефролитиаз, почечнокаменная болезнь
+nephropathia, -ae, f — нефропатия
+nephropexia, -ae, f — нефропексия (фиксация опущенной почки)
+nephrosclerosis, -is, f — нефросклероз
+nervosus, -a, -um — нервный
+nervus, -i, m — нерв
+neuralgia, -ae, f — невралгия (боль по ходу нерва)
+neuronum, -i, n — нейрон
+niger, -gra, -grum — черный, темный
+nitras, -atis, m — нитрат

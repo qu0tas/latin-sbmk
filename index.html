@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Латинско-русский переводчик · СБМК</title>
+<meta name="description" content="Латинско-русский и русско-латинский переводчик по словарю учебника В.И. Кравченко для студентов Сахалинского базового медицинского колледжа.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><rect width='64' height='64' rx='16' fill='%230f766e'/><text x='32' y='44' font-size='34' text-anchor='middle' fill='white' font-family='Georgia,serif' font-weight='bold'>L</text></svg>">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<header class="top">
+  <div class="wrap top-in">
+    <div class="brand">
+      <div class="logo">L</div>
+      <div>
+        <h1>Lingua Latina <span>medicinalis</span></h1>
+        <p>Переводчик по словарю учебника «Латинский язык для медицинских колледжей и училищ»</p>
+      </div>
+    </div>
+    <div class="badge">Для студентов СБМК · Сахалин</div>
+  </div>
+  <nav class="wrap tabs" role="tablist">
+    <button class="tab on" data-tab="la">Латынь → Русский</button>
+    <button class="tab" data-tab="ru">Русский → Латынь</button>
+    <button class="tab" data-tab="dict">Словарь</button>
+    <button class="tab" data-tab="el">Терминоэлементы</button>
+    <button class="tab" data-tab="about">О сайте</button>
+  </nav>
+</header>
+
+<main class="wrap">
+  <!-- Латынь → русский -->
+  <section class="panel" id="p-la">
+    <div class="grid2">
+      <div class="io">
+        <div class="io-h"><span class="lang">Латинский</span><button class="clear" title="Очистить">×</button></div>
+        <textarea id="la-in" spellcheck="false" placeholder="Введите латинское слово или фразу, например: tinctura Valerianae"></textarea>
+        <div class="examples">Примеры:
+          <button data-ex="tinctura Valerianae">tinctura Valerianae</button>
+          <button data-ex="solutio acidi borici">solutio acidi borici</button>
+          <button data-ex="musculus biceps brachii">musculus biceps brachii</button>
+          <button data-ex="gastritis">gastritis</button>
+        </div>
+      </div>
+      <div class="io">
+        <div class="io-h"><span class="lang">Русский</span>
+          <span class="io-actions"><button class="swap" title="Перевести обратно">⇄</button><button class="copy">Копировать</button></span></div>
+        <div class="out" id="la-out"></div>
+        <div class="legend"><span class="dot ok"></span> есть в словаре <span class="dot bad"></span> нет в словаре</div>
+      </div>
+    </div>
+    <h2 class="sub">Разбор по словам</h2>
+    <div class="details" id="la-details"></div>
+  </section>
+
+  <!-- Русский → латынь -->
+  <section class="panel" id="p-ru" hidden>
+    <div class="grid2">
+      <div class="io">
+        <div class="io-h"><span class="lang">Русский</span><button class="clear" title="Очистить">×</button></div>
+        <textarea id="ru-in" spellcheck="false" placeholder="Введите русское слово или фразу, например: настойка валерианы"></textarea>
+        <div class="examples">Примеры:
+          <button data-ex="настойка валерианы">настойка валерианы</button>
+          <button data-ex="раствор борной кислоты">раствор борной кислоты</button>
+          <button data-ex="правая почка">правая почка</button>
+          <button data-ex="таблетки от кашля">таблетки от кашля</button>
+        </div>
+      </div>
+      <div class="io">
+        <div class="io-h"><span class="lang">Латинский</span>
+          <span class="io-actions"><button class="swap" title="Перевести обратно">⇄</button><button class="copy">Копировать</button></span></div>
+        <div class="out latin" id="ru-out"></div>
+        <div class="legend"><span class="dot ok"></span> есть в словаре <span class="dot bad"></span> нет в словаре · окончания подобраны автоматически — проверяйте по таблице форм</div>
+      </div>
+    </div>
+    <h2 class="sub">Разбор по словам</h2>
+    <div class="details" id="ru-details"></div>
+  </section>
+
+  <!-- Словарь -->
+  <section class="panel" id="p-dict" hidden>
+    <div class="dict-bar">
+      <input id="dict-q" type="search" placeholder="Поиск по-латински или по-русски (можно вводить любую форму: cordis, venae…)" autocomplete="off">
+      <span id="dict-count"></span>
+    </div>
+    <div id="dict-letters" class="letters"></div>
+    <ul id="dict-list" class="dict-list"></ul>
+  </section>
+
+  <!-- Терминоэлементы -->
+  <section class="panel" id="p-el" hidden>
+    <p class="lead">Приставки, греческие терминоэлементы и таблицы по системам органов из материалов к учебнику.</p>
+    <div id="el-body"></div>
+  </section>
+
+  <!-- О сайте -->
+  <section class="panel prose" id="p-about" hidden>
+    <h2>О сайте</h2>
+    <p>Учебный переводчик для студентов <b>Сахалинского базового медицинского колледжа (СБМК)</b>. Он работает <b>только со словами из словаря учебника</b> В.И. Кравченко «Латинский язык для медицинских колледжей и училищ» (латинско-русский словарь, с. 327–363) и таблиц терминоэлементов. Слова, которых нет в словаре, не переводятся и подсвечиваются красным.</p>
+    <h3>Как это работает</h3>
+    <ul>
+      <li><b>Латынь → русский.</b> Для каждого словарного слова построены все падежные формы (5 склонений, прилагательные 1–2 и 3 склонения, сравнительная степень) и формы глаголов. Поэтому можно вводить слово в любой форме: <i>cordis, venarum, tabulettas</i> — сайт найдёт словарную форму и покажет падеж и число. Устойчивые сочетания из словаря (<i>oleum Ricini, acidum boricum</i>) распознаются целиком.</li>
+      <li><b>Русский → латынь.</b> Русские слова сравниваются со словарём с учётом окончаний (почки, почкой, почек → почка → <i>ren</i>). По окончаниям определяется падеж, латинское прилагательное согласуется с существительным в роде, числе и падеже, а определение ставится после определяемого слова.</li>
+      <li>Если слова нет в словаре, сайт может показать <b>подсказку по терминоэлементам</b> (например, <i>gastr- + -itis</i>), но не выдаёт её за перевод.</li>
+      <li>Нажмите на любое слово, чтобы открыть статью и <b>таблицу склонения</b>.</li>
+    </ul>
+    <h3>Ограничения</h3>
+    <ul>
+      <li>Страница 341 словаря (слова от <i>gelatinosus</i> до <i>hamatus</i>) отсутствует в фотографиях, поэтому этих слов пока нет.</li>
+      <li>Автоматический выбор падежа — подсказка, а не замена правилам: проверяйте результат по таблице форм.</li>
+    </ul>
+    <p class="muted">В словаре сейчас <b id="stat-words">0</b> статей.</p>
+  </section>
+</main>
+
+<footer class="wrap foot">
+  Источник: В.И. Кравченко, «Латинский язык для медицинских колледжей и училищ» (словарь и таблицы терминоэлементов). Сделано для студентов СБМК, Южно-Сахалинск.
+</footer>
+
+<div id="modal" class="modal" hidden>
+  <div class="modal-card" role="dialog" aria-modal="true">
+    <button class="modal-x" data-close aria-label="Закрыть">×</button>
+    <div id="modal-body"></div>
+  </div>
+</div>
+
+<script src="data/dictionary.js"></script>
+<script src="js/morph.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>

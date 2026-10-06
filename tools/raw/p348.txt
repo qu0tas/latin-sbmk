@@ -1,0 +1,45 @@
+melanoma, -atis, n — меланома (опухоль из клеток, продуцирующих меланин)
+melanonychia, -ae, f — меланонихия
+melanosis, -is, f — меланоз
+melanuria, -ae, f — меланурия (наличие меланина в моче)
+membrana, -ae, f — перепонка
+membranaceus, -a, -um — перепончатый
+membrum, -i, n — конечность
+meninges, -ium, f — мозговые оболочки
+meningitis, -idis, f — менингит (воспаление мозговых оболочек)
+meningocele, -es, f — грыжа мозговых оболочек
+meningolysis, -is, f — менинголизис
+mensura, -ae, f — мера
+Mentha, -ae, f — мята
+Mentha piperita — мята перечная
+mesencephalon, -i, n — средний мозг
+mesenterium, -i, n — брыжейка тонкой кишки
+metacarpus, -i, m — пясть
+metaplasia, -ae, f — метаплазия
+metatarsus, -i, m — плюсна
+Methandrostenolonum, -i, n — метандростенолон
+Methylium, -i, n — метил
+Methylsalicylas, -atis, m — метилсалицилат
+metrorrhagia, -ae, f — метроррагия (маточное кровотечение)
+microspondylia, -ae, f — микроспондилия
+minimus, -a, -um — наименьший
+minor, -us — меньший, малый (сравн. степень)
+mixtio, -onis, f — смесь
+mixtura, -ae, f — микстура
+modiolus, -i, m — стержень
+molaris, -e — коренной
+monoarthritis, -idis, f — моноартрит (воспаление одного сустава)
+monocytopenia, -ae, f — моноцитопения
+monocytopoesis, -is, f — моноцитопоэз (образование моноцитов)
+Monomycinum, -i, n — мономицин
+mononeuritis, -idis, f — мононеврит (воспаление одного нерва)
+mora, -ae, f — задержка, промедление
+morbus, -i, m — болезнь
+morphinismus, -i, m — морфинизм
+mors, mortis, f — смерть
+mucilago, -inis, f — слизь
+mucosus, -a, -um — слизистый
+multum — много
+muscularis, -e — мышечный
+musculus, -i, m — мышца
+mycosis, -is, f — микоз (болезни, вызываемые паразитическими грибками)

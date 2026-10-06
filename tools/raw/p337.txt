@@ -1,0 +1,41 @@
+dilatatus, -a, -um — расширенный
+Dimedrolum, -i, n — димедрол
+Dimexidum, -i, n — димексид
+Dipheninum, -i, n — дифенин
+Diplacinum, -i, n — диплацин
+diplegia, -ae, f — диплегия (двусторонний паралич)
+diploe, -es, f — диплоэ (губчатое вещество костей свода черепа)
+Diprophyllinum, -i, n — дипрофиллин
+discus, -i, m — диск
+distalis, -e — дистальный
+dolichocephalia, -ae, f — долихоцефалия, длинноголовость
+dolichocolon, -i, n — долихоколон
+dolor, -oris, m — боль
+dorsalis, -e — дорсальный, тыльный
+dorsum, -i, n — тыл, спина, спинка
+dosis, -is, f — доза
+dragee — нескл. драже
+Hendevitum, -i, n — «Гендевит»
+Hexavitum, -i, n — «Гексавит»
+Revitum, -i, n — «Ревит»
+Undevitum, -i, n — «Ундевит»
+dubius, -a, -um — сомнительный
+ductulus, -i, m — проточек, каналец
+ductus, -us, m — проток
+duodenectomia, -ae, f — дуоденэктомия
+duodenitis, -idis, f — дуоденит (воспаление двенадцатиперстной кишки)
+duodenum, -i, n — двенадцатиперстная кишка
+duplex, -icis — двойной
+durus, -a, -um — твердый
+dyskinesia, -ae, f — дискинезия
+dysosmia, -ae, f — дизосмия
+dysphagia, -ae, f — дисфагия (затрудненное глотание)
+dysplasia, -ae, f — дисплазия (нарушение развития органов и тканей)
+dyspnoe, -es, f — диспноэ (затрудненное дыхание, одышка)
+dystonia, -ae, f — дистония
+dystrophia, -ae, f — дистрофия (расстройство питания органов и тканей)
+dysuria, -ae, f — дизурия (расстройство мочеиспускания)
+e, ex — предл. с abl. из
+ejaculatorius, -a, -um — семявыбрасывающий
+electrocardiogramma, -atis, n — электрокардиограмма
+electroencephalogramma, -atis, n — электроэнцефалограмма

@@ -1,0 +1,43 @@
+cholecystostomia, -ae, f — холецистостомия
+cholecystotomia, -ae, f — холецистотомия (вскрытие желчного пузыря)
+choledochus, -a, -um — желчный
+cholelithiasis, -is, f — холелитиаз (желчнокаменная болезнь)
+cholestasis, -is, f — холестаз (застой желчи в желчных протоках)
+chondrogenesis, -is, f — хондрогенез (образование хрящевой ткани)
+chondromalacia, -ae, f — хондромаляция (размягчение хрящевой ткани)
+chorda, -ae, f — хорда
+chromosoma, -atis, n — хромосома
+chronicus, -a, -um — хронический
+chylostasis, -is, f — хилостаз (застой лимфы)
+chyluria, -ae, f — хилурия (наличие лимфы в моче)
+chylus, -i, m — хилус (млечный сок)
+ciliaris, -e — ресничный
+cingulum, -i, n — пояс
+circulus, -i, m — круг
+circumferentia, -ae, f — окружность
+circumflexus, -a, -um — огибающий
+cisterna, -ae, f — цистерна
+claustrum, -i, n — ограда
+clavicula, -ae, f — ключица
+clavicularis, -e — ключичный
+clavipectoralis, -e — ключично-грудной
+clysma, -atis, n — клизма (введение жидкости в толстую кишку)
+coccus, -i, m — кокк (бактерия сферической или овальной формы)
+coccygeus, -a, -um — копчиковый
+coccyx, -ygis, m — копчик
+cochlea, -ae, f — улитка
+coeliacus, -a, -um — чревный
+coeruleus, -a, -um — синий
+colitis, -idis, f — колит (воспаление слизистой оболочки толстой кишки)
+Collargolum, -i, n — колларгол
+collateralis, -e — коллатеральный
+collega, -ae, m, f — коллега
+colliculus, -i, m — бугорок, холмик
+colloquium, -i, n — разговор, беседа
+collum, -i, n — шея; шейка
+colon, -i, n — ободочная кишка
+coloplastica, -ae, f — колопластика
+coloptosis, -is, f — колоптоз (опущение ободочной кишки)
+coloproctectomia, -ae, f — колопроктэктомия
+colospasmus, -i, m — колоспазм (спазм толстой кишки)
+colporrhexis, -is, f — кольпорексис (разрыв стенки влагалища)

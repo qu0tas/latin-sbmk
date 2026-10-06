@@ -1,0 +1,56 @@
+typhlomegalia, -ae, f — тифломегалия (увеличение размеров слепой кишки)
+typhloptosis, -is, f — тифлоптоз (опущение слепой кишки)
+typhlospasmus, -i, m — тифлоспазм (спазм слепой кишки)
+ulcerosus, -a, -um — язвенный
+ulcus, -eris, n — язва (гноящаяся или воспаленная ранка на поверхности кожи или слизистой оболочки)
+ulna, -ae, f — локтевая кость
+ulnaris, -e — локтевой
+umbilicalis, -e — пупочный
+umbo, -onis, m — пупок
+uncinatus, -a, -um — крючковидный
+uncus, -i, m — крючок
+unguentum, -i, n — мазь
+unguis, -is, m — ноготь
+uraemia, -ae, f — уремия (наличие мочевины и других азотистых веществ в крови)
+ureter, -eris, m — мочеточник
+urethra, -ae, f — уретра, мочеиспускательный канал
+urina, -ae, f — моча
+urinarius, -a, -um — мочевой
+urogenitalis, -e — мочеполовой
+urolithus, -i, m — уролит, мочевой камень
+urostasis, -is, f — уростаз (застой мочи в мочевых путях)
+Urtica, -ae, f — крапива
+usus, -us, m — употребление
+uterinus, -a, -um — маточный
+uterus, -i, m — матка
+vagina, -ae, f — влагалище
+vaginalis, -e — вагинальный
+Valeriana, -ae, f — валериана
+Validolum, -i, n — валидол
+valva, -ae, f — клапан
+valvula, -ae, f — заслонка, клапан
+vas, vasis, n — сосуд
+Vaselinum, -i, n — вазелин
+vena, -ae, f — вена
+venectasia, -ae, f — венэктазия (расширение вены)
+venectomia, -ae, f — венэктомия (удаление вены)
+venenum, -i, n — яд
+venosus, -a, -um — венозный
+venotomia, -ae, f — венотомия (вскрытие просвета вены, например для удаления тромба)
+venter, -tris, m — брюшко (мышцы)
+ventriculus, -i, m — желудочек; желудок
+venula, -ae, f — венула (маленькая вена)
+vermiformis, -e — червеобразный
+vermis, -is, m — червь
+vertebra, -ae, f — позвонок
+vertebralis, -e — позвоночный
+vertex, -icis, m — вершина; темя
+verus, -a, -um — истинный
+vesica, -ae, f — пузырь
+vestibulum, -i, n — преддверие
+via, -ae, f — путь
+Vikasolum, -i, n — викасол
+vinculum, -i, n — связка
+Vinylinum, -i, n — винилин
+viscera, -um, n — внутренности, внутренние органы
+visus, -us, m — зрение

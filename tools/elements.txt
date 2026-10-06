@@ -1,0 +1,74 @@
+# Терминоэлементы и приставки (из таблиц). Формат: тип | элемент(ы) через / | значение
+prefix | a/an | отрицание
+prefix | ad | до, для, к, при
+prefix | per | через
+prefix | cum | с, со
+prefix | ex | из
+prefix | pro | для
+prefix | in | в
+prefix | sub | под
+prefix | anti | против
+prefix | de | без, не, удаление
+prefix | des | избавление
+prefix | dys | нарушение, расстройство
+prefix | endo | в, внутри
+prefix | exo | вне, снаружи
+prefix | extra | вне, сверх
+prefix | hyper | повышение
+prefix | hypo | понижение
+prefix | peri | вокруг
+prefix | re | повторное действие
+prefix | syn | с, в связи с
+prefix | trans | через, пере
+prefix | para | около
+suffix | aesthesia | ощущение
+suffix | alg/algia | боль
+suffix | graphia | изображение
+suffix | gramma | регистрация
+suffix | haem/haemat/aemia | кровь
+suffix | logia | наука о …
+suffix | metria | измерение
+suffix | pathia | чувство, заболевание
+suffix | thermia | тепло
+suffix | tonia | напряжение, тонус
+suffix | ur/uria | моча
+suffix | rrhagia | кровотечение
+suffix | scopia | осмотр
+suffix | therapia | лечение
+suffix | trophia | питание
+suffix | ectasia | расширение
+suffix | ectomia | удаление
+suffix | ptosis | опущение
+suffix | pneumo | воздух
+suffix | philia | склонность
+suffix | phobia | страх
+suffix | plasia | развитие
+suffix | plegia | паралич
+suffix | rrhaphia | шов
+suffix | sthenia | сила
+suffix | stomia | свищ
+suffix | tomia | вскрытие, разрез
+suffix | hydr | вода
+suffix | ergia | реакция организма
+suffix | urgia | работа
+suffix | malacia | размягчение
+suffix | penia | бедность, нужда
+suffix | lith | камень
+suffix | itis | воспаление
+suffix | oma | опухоль
+suffix | osis/iasis | хроническое невоспалительное заболевание
+suffix | py/pyo | гной
+suffix | onco | опухоль
+suffix | stasis | остановка тока жидкости
+suffix | gluc/glyc | сахар
+suffix | leuc | белый
+suffix | tachy | быстрый
+suffix | brady | медленный
+suffix | poli | серый
+suffix | poly | много
+suffix | erythr | красный
+suffix | melan | чёрный
+suffix | orth | правильный
+suffix | sclerosis | уплотнение
+suffix | stenosis | сужение
+suffix | spasmus | сокращение (спазм)

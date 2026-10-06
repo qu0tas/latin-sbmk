@@ -1,0 +1,43 @@
+cardiacus, -a, -um — сердечный
+cardiologia, -ae, f — кардиология
+cardiomyopathia, -ae, f — кардиомиопатия (общее название болезней сердечной мышцы)
+cardiorrhexis, -is, f — кардиорексис (разрыв сердца)
+cardiosclerosis, -is, f — кардиосклероз
+cardiostenosis, -is, f — кардиостеноз
+caries, -ei, f — кариес
+caroticus, -a, -um — сонный
+carotis, -idis, f — сонная артерия
+carpus, -i, m — запястье
+cartilago, -inis, f — хрящ
+catarrhalis, -e — катаральный
+cauda, -ae, f — хвост
+causticus, -a, -um — едкий
+caverna, -ae, f — ячейка; каверна (полость в органе)
+cavernosus, -a, -um — пещеристый
+cavitas, -atis, f — полость
+cavus, -a, -um — полый
+cellula, -ae, f — клетка
+cellularis, -e — клеточный
+cementum, -i, n — цемент (зуба)
+centralis, -e — центральный
+cephalicus, -a, -um — головной
+ceratus, -a, -um — вощеный
+cerebellum, -i, n — мозжечок
+cerebralis, -e — церебральный, мозговой
+cerebrum, -i, n — большой мозг, головной мозг
+cervicalis, -e — шейный
+cervix, -icis, f — шея; шейка
+charta, -ae, f — бумага
+cheiloplastica, -ae, f — хейлопластика (пластическая операция губы)
+cheiloschisis, -is, f — хейлосхизис (расщелина губы)
+chiasma, -atis, n — перекрест
+chirurgicus, -a, -um — хирургический
+chloridum, -i, n — хлорид
+Chloroformium, -i, n — хлороформ
+choana, -ae, f — хоана (заднее носовое отверстие)
+cholaemia, -ae, f — холемия
+chole, -es, f — желчь
+cholecystocolostomia, -ae, f — холецистоколостомия
+cholecystoduodenostomia, -ae, f — холецистодуоденостомия
+cholecystographia, -ae, f — холецистография
+cholecystopathia, -ae, f — холецистопатия (общее название болезней желчного пузыря)
