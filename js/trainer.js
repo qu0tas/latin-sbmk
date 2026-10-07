@@ -53,11 +53,62 @@
       m[i][j] = Math.min(m[i - 1][j] + 1, m[i][j - 1] + 1, m[i - 1][j - 1] + (a[i - 1] === b[j - 1] ? 0 : 1));
     return m[a.length][b.length];
   }
+  /* Латынь с грамматикой: «os, ossis, n», «os, ossis», «os ossis», «os, -is, n», «acidum, acidi, n» —
+     словарная форма обязательна, грамматика (род. п. и род) — по желанию, в любом из принятых видов записи. */
+  const GEN_RE = /^[mfn]$/;
+  function gramTokOk(t, g) {
+    if (t === g) return true;
+    if (GEN_RE.test(t) || GEN_RE.test(g)) return false;
+    if (t.length >= 2 && g.endsWith(t)) return true;      // ossis ← ssis / sis / is
+    if (g.length >= 1 && t.endsWith(g) && t.length > g.length) return true; // acidi ← i
+    return false;
+  }
+  function laGramMatch(answer, input) {
+    const toks = s => normLa(s).split(/[\s,]+/).filter(Boolean);
+    const inp = toks(input);
+    return variants(answer).some(v => {
+      const parts = v.split(',');
+      const lemma = toks(parts[0]);
+      const gram = toks(parts.slice(1).join(' '));
+      if (!lemma.length || inp.length < lemma.length) return false;
+      for (let i = 0; i < lemma.length; i++) if (inp[i] !== lemma[i]) return false;
+      let j = 0;
+      for (const t of inp.slice(lemma.length)) {
+        while (j < gram.length && !gramTokOk(t, gram[j])) j++;
+        if (j >= gram.length) return false;
+        j++;
+      }
+      return true;
+    });
+  }
   function check(card, input) {
     const n = card.lang === 'la' ? normLa(input) : normRu(input);
     if (!n) return { ok: false, close: false };
     const acc = card.lang === 'la' ? laAnswers(card.answer) : ruAnswers(card.answer);
     if (acc.includes(n)) return { ok: true };
+    if (card.lang === 'la' && laGramMatch(card.answer, input)) return { ok: true };
+    if (card.lang === 'la') { // написали только родительный падеж: ossis вместо os
+      const v = variants(card.answer).find(v => v.includes(','));
+      if (v) {
+        const lem = normLa(v.split(',')[0]), g = normLa(v.split(',')[1] || '').replace(/\s+/g, '');
+        // род. п. дан в словаре полностью (os, ossis; lac, lactis) — засчитываем с подсказкой
+        if (g && !GEN_RE.test(g) && n === g && g.slice(0, 2) === lem.slice(0, 2)) return { ok: true, note: g + ' — это родительный падеж; словарная запись: ' + v.trim() };
+      }
+      // ответ без грамматики (системы органов: «os») — берём род. п. из словаря сайта
+      const T = window.Translator;
+      if (T && T.entries) for (const v2 of variants(card.answer)) {
+        const lem = normLa(v2.split(',')[0]);
+        const cands = T.entries.filter(e => normLa(e.la) === lem && e.info && e.info.pos === 'noun' && e.info.genFull);
+        const q = normRu(card.q || '');
+        const e = cands.length > 1 ? cands.find(e => q && normRu(e.ru).includes(q)) : cands[0]; // os: «рот» (oris) или «кость» (ossis)
+        if (e && normLa(e.info.genFull) === n && e.info.genFull.slice(0, 2).toLowerCase() === e.la.slice(0, 2).toLowerCase() && e.info.decl === 3)
+          return { ok: true, note: n + ' — это родительный падеж; словарная запись: ' + e.la + ', ' + e.gr };
+      }
+    }
+    if (card.lang === 'ru') { // «артерия бедренная» = «бедренная артерия»
+      const bag = x => x.split(' ').filter(Boolean).sort().join(' ');
+      if (n.includes(' ') && acc.some(x => bag(x) === bag(n))) return { ok: true };
+    }
     const close = acc.some(x => x.length >= 4 && lev(x, n) === 1);
     return { ok: false, close };
   }
@@ -93,14 +144,27 @@
     return cards;
   }
   function shuffle(a) { for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; }
+  /* Колода: сначала каждое слово ровно один раз (круг 1), затем дополнительные повторения —
+     случайные слова, причём те, в которых ошибались, попадаются чаще. */
   function makeDeck(cards, reps) {
-    let deck = [];
-    for (let r = 0; r < reps; r++) {
-      const round = shuffle(cards.map(c => Object.assign({}, c)));
-      if (deck.length && round.length > 1 && round[0].key === deck[deck.length - 1].key) round.push(round.shift());
-      deck = deck.concat(round);
+    return { base: cards, total: cards.length * reps, deck: shuffle(cards.map(c => Object.assign({}, c))) };
+  }
+  function extendDeck(s) {
+    const N = s.base.length, need = Math.min(N, s.total - s.deck.length);
+    if (need <= 0) return;
+    const bad = {}; s.log.forEach(x => { if (!x.ok) bad[x.key] = (bad[x.key] || 0) + 1; });
+    let pool = s.base.map(c => ({ c, w: 1 + 3 * (bad[c.key] || 0) }));
+    const add = [];
+    while (add.length < need) {
+      if (!pool.length) pool = s.base.map(c => ({ c, w: 1 + 3 * (bad[c.key] || 0) }));
+      const last = (add.length ? add[add.length - 1] : s.deck[s.deck.length - 1]).key;
+      let cand = pool.length > 1 ? pool.filter(x => x.c.key !== last) : pool;
+      let sum = cand.reduce((a, x) => a + x.w, 0), r = Math.random() * sum, pick = cand[cand.length - 1];
+      for (const x of cand) { r -= x.w; if (r <= 0) { pick = x; break; } }
+      pool.splice(pool.indexOf(pick), 1);
+      add.push(Object.assign({}, pick.c));
     }
-    return deck;
+    s.deck = s.deck.concat(add);
   }
 
   /* ---------- экраны ---------- */
@@ -170,7 +234,7 @@
     root().onclick = null;
     const nCards = buildCards().length;
     let h = stepBar(2) + '<div class="tr-card tr-settings"><h3>Настройки тренировки</h3>' +
-      '<div class="tr-row"><label for="tr-reps">Сколько раз повторить весь список</label><div class="tr-reps"><input type="range" id="tr-reps" min="1" max="20" value="' + st.reps + '"><b id="tr-reps-v">' + st.reps + '</b></div></div>' +
+      '<div class="tr-row"><label for="tr-reps">Сколько заданий (× размер списка)</label><div class="tr-reps"><input type="range" id="tr-reps" min="1" max="20" value="' + st.reps + '"><b id="tr-reps-v">' + st.reps + '</b></div></div>' +
       '<div class="tr-row"><span>Что писать</span><div class="tr-seg">' +
       [['ru2la', 'Вижу русский — пишу латынь'], ['la2ru', 'Вижу латынь — пишу перевод'], ['mix', 'Вперемешку']].map(([v, t]) => '<label><input type="radio" name="tr-dir" value="' + v + '"' + (st.dir === v ? ' checked' : '') + '> ' + t + '</label>').join('') + '</div></div>' +
       '<div class="tr-row"><span>Проверка</span><div class="tr-seg">' +
@@ -179,7 +243,7 @@
       '<p class="muted small">Латынь можно писать без грамматики: <i>aqua</i> вместо <i>aqua, ae, f</i>. Регистр, ё/е, j/i и ae/e не важны. Для перевода достаточно одного из значений.</p></div>' +
       '<div class="tr-bar"><button class="btn ghost" id="tr-back">← К спискам</button><button class="btn" id="tr-start">Начать</button></div>';
     root().innerHTML = h;
-    const total = () => { $('#tr-total').textContent = 'Всего заданий: ' + nCards * st.reps + ' (' + nCards + ' × ' + st.reps + ')'; };
+    const total = () => { $('#tr-total').textContent = 'Всего заданий: ' + nCards * st.reps + '. Сначала каждое из ' + nCards + ' слов по одному разу' + (st.reps > 1 ? ', затем ещё ' + nCards * (st.reps - 1) + ' случайных повторений — чаще те слова, где были ошибки.' : '.'); };
     $('#tr-reps').oninput = e => { st.reps = +e.target.value; $('#tr-reps-v').textContent = st.reps; total(); save(); };
     $$('[name=tr-dir]').forEach(r => r.onchange = () => { st.dir = r.value; save(); });
     $$('[name=tr-fb]').forEach(r => r.onchange = () => { st.feedback = r.value; save(); });
@@ -191,14 +255,14 @@
     let cards = buildCards();
     if (onlyKeys) cards = cards.filter(c => onlyKeys.has(c.key));
     if (!cards.length) { screenSelect(); return; }
-    session = { deck: makeDeck(cards, st.reps), i: 0, log: [], feedback: st.feedback, waiting: false };
+    session = Object.assign(makeDeck(cards, st.reps), { i: 0, log: [], feedback: st.feedback, waiting: false });
     screenQuestion();
   }
   function screenQuestion() {
     const s = session, c = s.deck[s.i];
     const ok = s.log.filter(x => x.ok).length;
-    let h = stepBar(2) + '<div class="tr-prog"><div style="width:' + (100 * s.i / s.deck.length) + '%"></div></div>' +
-      '<div class="tr-meta"><span>' + (s.i + 1) + ' / ' + s.deck.length + '</span>' + (s.feedback === 'now' ? '<span>верно: ' + ok + ' · ошибок: ' + (s.log.length - ok) + '</span>' : '<span>ответы проверим в конце</span>') + '</div>' +
+    let h = stepBar(2) + '<div class="tr-prog"><div style="width:' + (100 * s.i / s.total) + '%"></div></div>' +
+      '<div class="tr-meta"><span>' + (s.i + 1) + ' / ' + s.total + (s.total > s.base.length ? (s.i < s.base.length ? ' · все слова по разу' : ' · повторение') : '') + '</span>' + (s.feedback === 'now' ? '<span>верно: ' + ok + ' · ошибок: ' + (s.log.length - ok) + '</span>' : '<span>ответы проверим в конце</span>') + '</div>' +
       '<div class="tr-card tr-q"><div class="tr-src">' + esc(c.src) + '</div><div class="tr-label">' + esc(c.qLabel) + '</div><div class="tr-word">' + esc(c.q) + '</div>' +
       '<form id="tr-form" autocomplete="off"><input id="tr-in" class="tr-in ' + (c.lang === 'la' ? 'la' : '') + '" placeholder="' + (c.lang === 'la' ? 'по-латински…' : 'по-русски…') + '" autocapitalize="off" spellcheck="false">' +
       '<button class="btn" type="submit">Проверить</button></form><div id="tr-fb"></div></div>' +
@@ -207,7 +271,7 @@
     const inp = $('#tr-in'); inp.focus();
     $('#tr-form').onsubmit = e => { e.preventDefault(); if (s.waiting) next(); else answer(inp.value); };
     $('#tr-skip').onclick = () => { if (s.waiting) next(); else answer(''); };
-    $('#tr-stop').onclick = () => { s.deck = s.deck.slice(0, s.i); screenResults(); };
+    $('#tr-stop').onclick = () => { s.deck = s.deck.slice(0, s.i); s.total = s.i; screenResults(); };
   }
   function answer(val) {
     const s = session, c = s.deck[s.i];
@@ -218,7 +282,7 @@
     s.waiting = true;
     const fb = $('#tr-fb');
     fb.className = 'tr-fb ' + (r.ok ? 'good' : 'bad');
-    fb.innerHTML = r.ok ? '✓ Верно! <span class="muted">' + esc(c.show) + '</span>'
+    fb.innerHTML = r.ok ? '✓ Верно! <span class="muted">' + esc(c.show) + '</span>' + (r.note ? '<div class="small">' + esc(r.note) + '</div>' : '')
       : (val.trim() ? (r.close ? '≈ Почти — проверьте написание. ' : '✗ Неверно. ') : 'Правильный ответ: ') + '<b>' + esc(c.show) + '</b>' + (val.trim() ? ' <button class="link" id="tr-accept">мой ответ тоже верный — засчитать</button>' : '');
     fb.innerHTML += '<div class="muted small">Enter — дальше</div>';
     const acc = $('#tr-accept'); if (acc) acc.onclick = () => { rec.ok = true; rec.accepted = true; next(); };
@@ -226,6 +290,7 @@
   }
   function next() {
     const s = session; s.waiting = false; s.i++;
+    if (s.i >= s.deck.length) extendDeck(s);
     if (s.i >= s.deck.length) screenResults(); else screenQuestion();
   }
   function screenResults() {
