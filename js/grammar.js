@@ -35,13 +35,54 @@
   };
   const WORDS = [];
   Object.keys(W).forEach(g => W[g].split(/;\s*/).forEach(x => { const [w, ru] = x.split('|'); WORDS.push({ w: w.normalize('NFC'), ru, g }); }));
-  WORDS.forEach(x => { x.a = S.analyze(x.w); });
+  WORDS.forEach(x => { x.a = S.analyze(x.w); x.core = true; });
+
+  /* Частые слова, где суффиксное правило не работает (корень, а не суффикс) — долгота по природе */
+  const NAT = 'urtīca vesīca formīca lorīca lectīca trigemĭnus geminus|gemĭnus lamĭna pagĭna femĭna machĭna sarcĭna febrīlis senīlis juvenīlis virīlis puerīlis civīlis subtīlis hostīlis infantīlis sterĭlis trachēa glutēus peronēus chorēa'
+    .split(' ').reduce((m, x) => { const [k, v] = x.includes('|') ? x.split('|') : [S.plain(x), x]; m[k] = v.normalize('NFC'); return m; }, {});
+  function natForm(word) {
+    const k = S.plain(word).toLowerCase(), v = NAT[k];
+    if (!v || S.plain(word) !== word) return word;
+    return word[0] === word[0].toUpperCase() ? v[0].toUpperCase() + v.slice(1) : v;
+  }
+
+  /* Слова из общего словаря переводчика: берём только те, где правило даёт однозначный ответ */
+  const DICT = [];
+  (function () {
+    const T = window.Translator; if (!T || !T.entries) return;
+    const seen = new Set(WORDS.map(x => S.plain(x.w).toLowerCase()));
+    const ruClean = r => { r = String(r).replace(/^\s*(глаг|прил|сущ|нареч|предл|мест|числ)\.\s*[;,]?\s*/i, '').split(/[;(]/)[0].trim(); if (r.length > 40) r = r.slice(0, 40).replace(/,[^,]*$/, '').trim(); return r; };
+    const groupFor = (a, w) => {
+      if (a.n < 2 || !a.certain) return null;
+      if (a.code === 'two') return 'two';
+      if (a.code === 'nat-long' || a.code === 'nat-short') return 'nat';
+      if (a.code === 'suf') {
+        const lw = w.toLowerCase();
+        if (/īn-/.test(a.rule) && !/inum$/.test(lw)) return null;      // geminus, lamina, pagina — ненадёжно
+        if (/ĭc-/.test(a.rule) && /ic(a|ae)$/.test(lw)) return null;   // Urtica, vesica — корень, а не суффикс
+        if (/ĭl-/.test(a.rule) && !/bil(is|e)$/.test(lw)) return null; // febrilis, senilis — долгие
+        return a.idx === a.n - 2 ? 'suf-long' : 'suf-short';
+      }
+      return ['diph', 'cc', 'xz', 'vv', 'mcl'].includes(a.code) ? a.code : null;
+    };
+    T.entries.forEach(e => {
+      let w = String(e.la || '').normalize('NFC').trim();
+      if (!/^[A-Za-zāēīōūȳăĕĭŏŭëäöü]{4,}$/.test(w)) return;
+      const k = S.plain(w).toLowerCase(); if (seen.has(k)) return;
+      if (/^[A-Z]{2}/.test(w)) return;
+      w = natForm(w);
+      const a = S.analyze(w), g = groupFor(a, w);
+      const ru = ruClean(e.ru || '');
+      if (!g || !ru) return;
+      seen.add(k); DICT.push({ w, ru, g, a });
+    });
+  })();
 
   /* ---------- настройки ---------- */
   const LS = 'sbmk-stress-v1';
-  const st = Object.assign({ groups: GROUPS.map(g => g.id), count: 20, nums: true }, load());
+  const st = Object.assign({ groups: GROUPS.map(g => g.id), count: 20, nums: true, dict: true }, load());
   function load() { try { return JSON.parse(localStorage.getItem(LS)) || {}; } catch (e) { return {}; } }
-  function save() { try { localStorage.setItem(LS, JSON.stringify({ groups: st.groups, count: st.count, nums: st.nums })); } catch (e) { /* */ } }
+  function save() { try { localStorage.setItem(LS, JSON.stringify({ groups: st.groups, count: st.count, nums: st.nums, dict: st.dict })); } catch (e) { /* */ } }
   let view = 'rules', session = null;
 
   function nav() {
@@ -65,7 +106,7 @@
     if (opt.noStress) a.idx = -1;
     return '<span class="syl-word">' + a.syl.map((s, i) => '<span class="syl-s' + (i === a.idx ? ' st' : '') + '">' + esc(i === a.idx ? S.accentSyl(s) : S.plain(s)) + (opt.nums ? '<sub>' + (n - i) + '</sub>' : '') + '</span>').join('<span class="syl-d">-</span>') + '</span>';
   }
-  const ex = (w, nums) => '<i class="gr-ex">' + sylHtml(w, { nums: nums !== false }) + '</i>';
+  const ex = (w, nums) => '<i class="gr-ex' + (window.Speech && Speech.ok ? ' say-ex' : '') + '" data-say="' + esc(w) + '" data-lang="la" title="Прослушать">' + sylHtml(w, { nums: nums !== false }) + '</i>';
 
   /* ---------- Правила ---------- */
   function renderRules() {
@@ -93,8 +134,9 @@
       '</ol></div></div>' +
       '<p class="muted small">Если ни одно правило не подходит (после гласного одна согласная, суффикса нет), долготу узнают по словарю — там над гласным стоит знак ¯ или ˘. Поэтому в тренажёре такие слова даны со знаком: <i>Valeriāna</i>, <i>spirĭtus</i>.</p>';
 
+    if (window.Speech && Speech.ok) h += '<p class="gr-saynote">' + Speech.ICON + ' Нажмите на любой латинский пример на этой странице, чтобы услышать, как он читается.</p>';
     h += '<h3>Таблица №1. Алфавит</h3><div class="tr-scroll"><table class="tr-table gr-table"><thead><tr><th>Буква</th><th>Название</th><th>Произношение</th><th>Когда</th></tr></thead><tbody>' + ALPHABET.map(r => '<tr><td class="la">' + r[0] + '</td><td>' + r[1] + '</td><td>' + r[2] + '</td><td>' + r[3] + '</td></tr>').join('') + '</tbody></table></div>';
-    h += '<h3>Таблица №2. Дифтонги, диграфы, буквосочетания</h3><div class="tr-scroll"><table class="tr-table gr-table"><thead><tr><th>Сочетание</th><th>Произношение</th><th>Условие</th><th>Пример</th></tr></thead><tbody>' + DIGR.map(r => '<tr><td class="la">' + r[0] + '</td><td>' + r[1] + '</td><td>' + r[2] + '</td><td class="la">' + r[3] + '</td></tr>').join('') + '</tbody></table></div>';
+    h += '<h3>Таблица №2. Дифтонги, диграфы, буквосочетания</h3><div class="tr-scroll"><table class="tr-table gr-table"><thead><tr><th>Сочетание</th><th>Произношение</th><th>Условие</th><th>Пример</th></tr></thead><tbody>' + DIGR.map(r => '<tr><td class="la">' + r[0] + '</td><td>' + r[1] + '</td><td>' + r[2] + '</td><td class="la">' + (window.Speech && Speech.ok ? r[3].replace(/([A-Za-zÀ-ž]+)(?= \[)/g, w => '<span class="say-ex" data-say="' + w + '" data-lang="la" title="Прослушать">' + w + '</span>') : r[3]) + '</td></tr>').join('') + '</tbody></table></div>';
     h += '<p class="muted small">Источник: Глоссарий СБМК по дисциплине «Основы латинского языка с медицинской терминологией» (2026), таблицы №1–3.</p></div>';
     h += '<div class="tr-bar gr-static"><button class="btn" data-gv="train">Потренироваться ставить ударения →</button></div>';
     root().innerHTML = h;
@@ -116,14 +158,16 @@
   ];
 
   /* ---------- Тренажёр: настройки ---------- */
-  function pool() { return WORDS.filter(x => st.groups.includes(groupOf(x))); }
+  function all() { return st.dict ? WORDS.concat(DICT) : WORDS; }
+  function pool() { return all().filter(x => st.groups.includes(groupOf(x))); }
   function groupOf(x) { return x.g; }
   function renderSetup() {
     let h = nav() + '<p class="lead">Нажмите на слог, на который падает ударение. Если ошибётесь, тренажёр покажет, куда правильно поставить ударение и по какому правилу.</p>';
     h += '<div class="tr-group"><div class="tr-gh"><h3>Правила</h3><button class="link" id="gr-all">выбрать все / снять</button></div><div class="tr-checks">' +
-      GROUPS.map(g => '<label class="tr-check"><input type="checkbox" data-gg="' + g.id + '"' + (st.groups.includes(g.id) ? ' checked' : '') + '><span>' + esc(g.title) + ' <em>' + WORDS.filter(x => x.g === g.id).length + '</em><br><small class="muted">' + esc(g.rule) + '</small></span></label>').join('') + '</div></div>';
+      GROUPS.map(g => '<label class="tr-check"><input type="checkbox" data-gg="' + g.id + '"' + (st.groups.includes(g.id) ? ' checked' : '') + '><span>' + esc(g.title) + ' <em>' + all().filter(x => x.g === g.id).length + '</em><br><small class="muted">' + esc(g.rule) + '</small></span></label>').join('') + '</div></div>';
     h += '<div class="tr-card tr-settings"><div class="tr-row"><span>Сколько слов</span><div class="tr-seg gr-seg">' +
       [10, 20, 40, 0].map(c => '<label><input type="radio" name="gr-c" value="' + c + '"' + (st.count === c ? ' checked' : '') + '> ' + (c ? c : 'все выбранные') + '</label>').join('') + '</div></div>' +
+      '<div class="tr-row"><span>Какие слова</span><label class="tr-pill"><input type="checkbox" id="gr-dict"' + (st.dict ? ' checked' : '') + '> добавить слова из словаря переводчика (+' + DICT.length + ')</label></div>' +
       '<div class="tr-row"><span>Подсказка</span><label class="tr-pill"><input type="checkbox" id="gr-nums"' + (st.nums ? ' checked' : '') + '> номера слогов от конца</label></div></div>';
     h += '<div class="tr-bar"><span id="gr-sel"></span><button class="btn" id="gr-start">Начать</button></div>';
     root().innerHTML = h;
@@ -132,6 +176,7 @@
     $('#gr-all').onclick = () => { st.groups = st.groups.length === GROUPS.length ? [] : GROUPS.map(g => g.id); save(); renderSetup(); };
     $$('[name=gr-c]').forEach(r => r.onchange = () => { st.count = +r.value; save(); });
     $('#gr-nums').onchange = e => { st.nums = e.target.checked; save(); };
+    $('#gr-dict').onchange = e => { st.dict = e.target.checked; save(); renderSetup(); };
     $('#gr-start').onclick = () => start(pool());
     upd();
   }
@@ -177,6 +222,7 @@
     const fb = $('#gr-fb');
     fb.className = 'tr-fb ' + (good ? 'good' : 'bad');
     fb.innerHTML = (good ? '✓ Верно: ' : '✗ Неверно. Правильно: ') + '<b class="gr-ans">' + esc(S.accented(x.w, a)) + '</b> <span class="muted">(' + esc(a.syl.map(S.plain).join('-')) + ')</span>' +
+      (window.Speech ? ' ' + Speech.trHtml(x.w) + Speech.btn(x.w, 'la') : '') +
       (!good && mistakeHint(a, pick) ? '<div class="gr-hint">' + esc(mistakeHint(a, pick)) + '</div>' : '') +
       '<div class="gr-why"><b>Почему:</b><ol>' + a.steps.map(t => '<li>' + esc(t) + '</li>').join('') + '</ol></div>' +
       '<button class="btn" id="gr-next">Дальше →</button><div class="muted small">Enter — дальше</div>';
@@ -228,9 +274,11 @@
       // если слово есть в тренажёре со знаком долготы — берём его (Valeriana → Valeriāna)
       const known = WORDS.find(x => S.plain(x.w).toLowerCase() === S.plain(word).toLowerCase());
       if (known && known.w !== word) word = known.w;
+      else word = natForm(word);
       const a = S.analyze(word);
       let h = '<div class="gr-res"><div class="gr-big">' + (a.certain ? esc(S.accented(word, a)) : esc(S.accented(word, a)) + ' <span class="muted">или</span> ' + esc(S.accented(word, Object.assign({}, a, { idx: a.alt })))) + '</div>' +
         '<div class="gr-sylline">' + sylHtml(word, { nums: true, noStress: !a.certain }) + '</div>' +
+        (window.Speech ? '<div class="gr-say">Читается: ' + Speech.trHtml(word) + Speech.btn(word, 'la') + '</div>' : '') +
         '<ol class="gr-steps">' + a.steps.map(t => '<li>' + esc(t) + '</li>').join('') + '</ol>';
       if (a.code === 'suf') h += '<p class="muted small">Правило суффиксов действует, только если это действительно суффикс, а не часть корня. Проверьте по словарю.</p>';
       return h + '</div>';
@@ -247,6 +295,6 @@
       ev.preventDefault(); next();
     });
   }
-  window.Grammar = { WORDS, GROUPS };
+  window.Grammar = { WORDS, DICT, GROUPS };
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init); else init();
 })();

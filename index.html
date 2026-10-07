@@ -2,11 +2,14 @@
 <html lang="ru">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0f766e">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
 <title>Латинско-русский переводчик · СБМК</title>
 <meta name="description" content="Латинско-русский и русско-латинский переводчик по словарям учебников В.И. Кравченко и Ю.И. Городковой для студентов Сахалинского базового медицинского колледжа.">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><rect width='64' height='64' rx='16' fill='%230f766e'/><text x='32' y='44' font-size='34' text-anchor='middle' fill='white' font-family='Georgia,serif' font-weight='bold'>L</text></svg>">
-<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/style.css?v=1.4.0">
 </head>
 <body>
 <header class="top">
@@ -34,6 +37,7 @@
 <main class="wrap">
   <!-- Латынь → русский -->
   <section class="panel" id="p-la">
+    <div class="dir-switch" role="tablist"><button class="tab mtab" data-tab="la">Латынь → Русский</button><button class="tab mtab" data-tab="ru">Русский → Латынь</button></div>
     <div class="grid2">
       <div class="io">
         <div class="io-h"><span class="lang">Латинский</span><button class="clear" title="Очистить">×</button></div>
@@ -58,6 +62,7 @@
 
   <!-- Русский → латынь -->
   <section class="panel" id="p-ru" hidden>
+    <div class="dir-switch" role="tablist"><button class="tab mtab" data-tab="la">Латынь → Русский</button><button class="tab mtab" data-tab="ru">Русский → Латынь</button></div>
     <div class="grid2">
       <div class="io">
         <div class="io-h"><span class="lang">Русский</span><button class="clear" title="Очистить">×</button></div>
@@ -129,6 +134,16 @@
       <li>«Далее» покажет списки в том же порядке, что и в глоссарии. Латинские слова или русский перевод можно скрыть, а нажатием подсмотреть.</li>
       <li>В тренировке выберите, сколько раз повторить весь список (1–20), что писать (латынь, перевод или вперемешку) и когда проверять: сразу или в конце. В итогах показаны процент по каждой теме и список слов, которые стоит подучить. Ошибки можно сразу потренировать ещё раз.</li>
     </ul>
+    <h3>Произношение</h3>
+    <ul>
+      <li>Кнопка 🔊 есть в переводчике, словаре, правилах и тренажёрах. Латынь читается по правилам чтения из глоссария СБМК (<i>solutio</i> — [солю́цио], <i>cito</i> — [ци́то]).</li>
+      <li>Слова из словаря и тренажёров озвучены заранее нейросетью <b>Silero TTS</b> (голос kseniya, <a href="https://github.com/snakers4/silero-models" target="_blank" rel="noopener">silero-models</a>, некоммерческое использование). Остальной текст читает голос вашего устройства.</li>
+      <li>В тренажёре есть <b>голосовой режим</b> (слово произносит диктор) и <b>диктант</b>.</li>
+    </ul>
+    <h3>Перевод по фото <small class="muted">(тестовая функция)</small></h3>
+    <ul>
+      <li>Кнопка «Фото» в переводчике распознаёт печатный латинский текст прямо на устройстве с помощью <a href="https://github.com/naptha/tesseract.js" target="_blank" rel="noopener">Tesseract.js</a> (Apache-2.0). Фото никуда не отправляется.</li>
+    </ul>
     <h3>Ограничения</h3>
     <ul>
       <li>Автоматический выбор падежа — подсказка, а не замена правилам: проверяйте результат по таблице форм.</li>
@@ -141,6 +156,21 @@
   Источники: В.И. Кравченко, «Латинский язык для медицинских колледжей и училищ» (словарь и таблицы терминоэлементов); Ю.И. Городкова «Латинский язык (для медицинских и фармацевтических колледжей и училищ)», КНОРУС, 2017 (словарь). Сделано для студентов СБМК, Южно-Сахалинск.
 </footer>
 
+<!-- Нижняя навигация для телефонов -->
+<nav class="mnav" aria-label="Разделы">
+  <button class="mnav-b" data-go="la" data-group="la ru"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h9M8.5 3v2M6 5c.5 3 2.5 5.5 5 7M11 5c-.8 3.5-3.5 6.5-7 8"/><path d="M12.5 21l4-10 4 10M14 17.5h5"/></svg><span>Перевод</span></button>
+  <button class="mnav-b" data-go="dict"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4.5A1.5 1.5 0 0 1 6.5 3H19v15H6.5A1.5 1.5 0 0 0 5 19.5z"/><path d="M5 19.5A1.5 1.5 0 0 0 6.5 21H19v-3"/><path d="M9 7h6M9 10.5h4"/></svg><span>Словарь</span></button>
+  <button class="mnav-b" data-go="gram"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20h4L19 9l-4-4L4 16z"/><path d="M13.5 6.5l4 4"/></svg><span>Грамматика</span></button>
+  <button class="mnav-b" data-go="train"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="4.5"/><circle cx="12" cy="12" r="1"/></svg><span>Тренажёр</span></button>
+  <button class="mnav-b" data-more data-group="el about"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="5.5" cy="12" r="1.3"/><circle cx="12" cy="12" r="1.3"/><circle cx="18.5" cy="12" r="1.3"/></svg><span>Ещё</span></button>
+</nav>
+<div class="msheet" id="msheet" hidden>
+  <div class="msheet-card" role="menu">
+    <button class="tab sheet-b" data-tab="el"><b>Терминоэлементы</b><span>приставки, корни, таблицы систем органов</span></button>
+    <button class="tab sheet-b" data-tab="about"><b>О сайте</b><span>источники, как всё работает</span></button>
+  </div>
+</div>
+
 <div id="modal" class="modal" hidden>
   <div class="modal-card" role="dialog" aria-modal="true">
     <button class="modal-x" data-close aria-label="Закрыть">×</button>
@@ -148,12 +178,15 @@
   </div>
 </div>
 
-<script src="data/dictionary.js"></script>
-<script src="js/morph.js"></script>
-<script src="js/app.js"></script>
-<script src="data/trainer.js"></script>
-<script src="js/trainer.js"></script>
-<script src="js/stress.js"></script>
-<script src="js/grammar.js"></script>
+<script src="data/dictionary.js?v=1.4.0"></script>
+<script src="js/morph.js?v=1.4.0"></script>
+<script src="js/app.js?v=1.4.0"></script>
+<script src="data/trainer.js?v=1.4.0"></script>
+<script src="js/trainer.js?v=1.4.0"></script>
+<script src="js/stress.js?v=1.4.0"></script>
+<script src="js/grammar.js?v=1.4.0"></script>
+<script src="data/audio.js?v=1.4.0"></script>
+<script src="js/speech.js?v=1.4.0"></script>
+<script src="js/photo.js?v=1.4.0"></script>
 </body>
 </html>
