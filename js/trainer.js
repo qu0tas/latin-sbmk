@@ -9,11 +9,11 @@
   const COLS = D.columns; // 0 рус, 1 лат, 2 греч, 3 воспал. лат, 4 воспал. рус, 5 прочие
   const LS = 'sbmk-trainer-v1';
   const WF = (window.SYSTEMS_DATA || []).filter(s => s.wf && s.wf.length);
-  const st = Object.assign({ lists: [], systems: [], wf: [], sysCols: [1, 2, 3], reps: 3, dir: 'ru2la', feedback: 'now', hideA: false, hideB: false, audio: false, trans: true }, load());
+  const st = Object.assign({ lists: [], systems: [], wf: [], sysCols: [1, 2, 3], reps: 3, dir: 'ru2la', feedback: 'now', hideA: false, hideB: false, audio: false, trans: true, order: 'rand' }, load());
   let session = null;
 
   function load() { try { return JSON.parse(localStorage.getItem(LS)) || {}; } catch (e) { return {}; } }
-  function save() { try { localStorage.setItem(LS, JSON.stringify({ lists: st.lists, systems: st.systems, wf: st.wf, sysCols: st.sysCols, reps: st.reps, dir: st.dir, feedback: st.feedback, hideA: st.hideA, hideB: st.hideB, audio: st.audio, trans: st.trans })); } catch (e) { /* */ } }
+  function save() { try { localStorage.setItem(LS, JSON.stringify({ lists: st.lists, systems: st.systems, wf: st.wf, sysCols: st.sysCols, reps: st.reps, dir: st.dir, feedback: st.feedback, hideA: st.hideA, hideB: st.hideB, audio: st.audio, trans: st.trans, order: st.order })); } catch (e) { /* */ } }
 
   /* ---------- нормализация и проверка ответа ---------- */
   function variants(s) { // "haem(o); haemat" → [haemo, haem, haemat]; "a(n)" → [an, a]
@@ -157,12 +157,15 @@
   function shuffle(a) { for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; }
   /* Колода: сначала каждое слово ровно один раз (круг 1), затем дополнительные повторения —
      случайные слова, причём те, в которых ошибались, попадаются чаще. */
+  /* «По порядку»: слова идут строго как в таблице, повторения — снова весь список по порядку. */
   function makeDeck(cards, reps) {
-    return { base: cards, total: cards.length * reps, deck: shuffle(cards.map(c => Object.assign({}, c))) };
+    const seq = st.order === 'seq', copy = cards.map(c => Object.assign({}, c));
+    return { base: cards, total: cards.length * reps, seq, deck: seq ? copy : shuffle(copy) };
   }
   function extendDeck(s) {
     const N = s.base.length, need = Math.min(N, s.total - s.deck.length);
     if (need <= 0) return;
+    if (s.seq) { s.deck = s.deck.concat(s.base.slice(0, need).map(c => Object.assign({}, c))); return; }
     const bad = {}; s.log.forEach(x => { if (!x.ok) bad[x.key] = (bad[x.key] || 0) + 1; });
     let pool = s.base.map(c => ({ c, w: 1 + 3 * (bad[c.key] || 0) }));
     const add = [];
@@ -257,6 +260,8 @@
     const nCards = buildCards().length;
     let h = stepBar(2) + '<div class="tr-card tr-settings"><h3>Настройки тренировки</h3>' +
       '<div class="tr-row"><label for="tr-reps">Сколько заданий (× размер списка)</label><div class="tr-reps"><input type="range" id="tr-reps" min="1" max="20" value="' + st.reps + '"><b id="tr-reps-v">' + st.reps + '</b></div></div>' +
+      '<div class="tr-row"><span>Порядок слов</span><div class="tr-seg">' +
+      [['rand', 'Вперемешку'], ['seq', 'По порядку — как в таблице']].map(([v, t]) => '<label><input type="radio" name="tr-order" value="' + v + '"' + (st.order === v ? ' checked' : '') + '> ' + t + '</label>').join('') + '</div></div>' +
       '<div class="tr-row"><span>Что писать</span><div class="tr-seg">' +
       [['ru2la', st.audio ? 'Слышу русский — пишу латынь' : 'Вижу русский — пишу латынь'], ['la2ru', st.audio ? 'Слышу латынь — пишу перевод' : 'Вижу латынь — пишу перевод'], ['mix', 'Вперемешку']].concat(SP() ? [['dict', 'Диктант: слышу латынь — пишу по-латински']] : []).map(([v, t]) => '<label><input type="radio" name="tr-dir" value="' + v + '"' + (st.dir === v ? ' checked' : '') + '> ' + t + '</label>').join('') + '</div></div>' +
       (SP() ? '<div class="tr-row"><span>Голосовой режим</span><div><label class="tr-pill tr-audio"><input type="checkbox" id="tr-audio"' + (st.audio || st.dir === 'dict' ? ' checked' : '') + (st.dir === 'dict' ? ' disabled' : '') + '> ' + SP().ICON + ' слово не показывается — его произносит диктор</label>' +
@@ -268,12 +273,13 @@
       '<p class="muted small">Латынь можно писать без грамматики: <i>aqua</i> вместо <i>aqua, ae, f</i>. Регистр, ё/е, j/i и ae/e не важны. Для перевода достаточно одного из значений.</p></div>' +
       '<div class="tr-bar"><button class="btn ghost" id="tr-back">← К спискам</button><button class="btn" id="tr-start">Начать</button></div>';
     root().innerHTML = h;
-    const total = () => { $('#tr-total').textContent = 'Всего заданий: ' + nCards * st.reps + '. Сначала каждое из ' + nCards + ' слов по одному разу' + (st.reps > 1 ? ', затем ещё ' + nCards * (st.reps - 1) + ' случайных повторений — чаще те слова, где были ошибки.' : '.'); };
+    const total = () => { $('#tr-total').textContent = 'Всего заданий: ' + nCards * st.reps + '. ' + (st.order === 'seq' ? 'Все ' + nCards + ' слов идут по порядку таблицы' + (st.reps > 1 ? ', затем список повторяется ещё ' + (st.reps - 1) + ' раз(а) — снова по порядку.' : '.') : 'Сначала каждое из ' + nCards + ' слов по одному разу' + (st.reps > 1 ? ', затем ещё ' + nCards * (st.reps - 1) + ' случайных повторений — чаще те слова, где были ошибки.' : '.')); };
     $('#tr-reps').oninput = e => { st.reps = +e.target.value; $('#tr-reps-v').textContent = st.reps; total(); save(); };
     $$('[name=tr-dir]').forEach(r => r.onchange = () => { st.dir = r.value; save(); screenSettings(); });
     if ($('#tr-trans2')) $('#tr-trans2').onchange = e => { st.trans = e.target.checked; save(); };
     if ($('#tr-audio')) $('#tr-audio').onchange = e => { st.audio = e.target.checked; save(); screenSettings(); };
     $$('[name=tr-fb]').forEach(r => r.onchange = () => { st.feedback = r.value; save(); });
+    $$('[name=tr-order]').forEach(r => r.onchange = () => { st.order = r.value; save(); total(); });
     $('#tr-back').onclick = screenStudy;
     $('#tr-start').onclick = () => startSession(null);
     total();
