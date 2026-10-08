@@ -1020,3 +1020,20 @@ crista colli costae | гребень шейки ребра
 tabuletta Glucosi | таблетка глюкозы
 cancer recti | рак прямой кишки
 angulus sterni | угол грудины
+
+## Словосочетания | Задание 4.5.3. Терминологические словосочетания | Латынь | Перевод
+vena coronaria ventriculi | венечная вена желудка
+vertebra pectoralis; vertebra thoracica | грудной позвонок
+cavum uteri; cavitas uteri | полость матки
+sulcus sinus sigmoidei | борозда сигмовидной пазухи
+musculus gluteus medius; musculus glutaeus medius | средняя ягодичная мышца
+fundus vesicae urinariae | дно мочевого пузыря
+ramus profundus arteriae transversae colli | глубокая ветвь поперечной артерии шеи
+nodus lymphaticus | лимфатический узел
+plica tunicae mucosae vesicae felleae | складка слизистой оболочки желчного пузыря
+vagina externa nervi optici | наружное влагалище зрительного нерва
+arteria coronaria dextra | правая венечная артерия
+fossa cranii media | средняя ямка черепа
+tabuletta Analgini | таблетка анальгина
+tinctura Absinthii | настойка полыни
+infusum Sennae compositum | сложный настой сенны
