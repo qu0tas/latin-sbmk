@@ -8,11 +8,12 @@
   const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
   const COLS = D.columns; // 0 рус, 1 лат, 2 греч, 3 воспал. лат, 4 воспал. рус, 5 прочие
   const LS = 'sbmk-trainer-v1';
-  const st = Object.assign({ lists: [], systems: [], sysCols: [1, 2, 3], reps: 3, dir: 'ru2la', feedback: 'now', hideA: false, hideB: false, audio: false, trans: true }, load());
+  const WF = (window.SYSTEMS_DATA || []).filter(s => s.wf && s.wf.length);
+  const st = Object.assign({ lists: [], systems: [], wf: [], sysCols: [1, 2, 3], reps: 3, dir: 'ru2la', feedback: 'now', hideA: false, hideB: false, audio: false, trans: true }, load());
   let session = null;
 
   function load() { try { return JSON.parse(localStorage.getItem(LS)) || {}; } catch (e) { return {}; } }
-  function save() { try { localStorage.setItem(LS, JSON.stringify({ lists: st.lists, systems: st.systems, sysCols: st.sysCols, reps: st.reps, dir: st.dir, feedback: st.feedback, hideA: st.hideA, hideB: st.hideB, audio: st.audio, trans: st.trans })); } catch (e) { /* */ } }
+  function save() { try { localStorage.setItem(LS, JSON.stringify({ lists: st.lists, systems: st.systems, wf: st.wf, sysCols: st.sysCols, reps: st.reps, dir: st.dir, feedback: st.feedback, hideA: st.hideA, hideB: st.hideB, audio: st.audio, trans: st.trans })); } catch (e) { /* */ } }
 
   /* ---------- нормализация и проверка ответа ---------- */
   function variants(s) { // "haem(o); haemat" → [haemo, haem, haemat]; "a(n)" → [an, a]
@@ -146,8 +147,13 @@
         });
       });
     });
+    st.wf.forEach(id => {
+      const S = WF.find(s => s.id === id); if (!S) return;
+      S.wf.forEach((q, i) => cards.push({ key: 'wf:' + id + ':' + i, src: S.title + ' · словообразование', q: q.q, qLabel: 'Словообразование: образуйте термин', answer: q.a, lang: 'la', show: q.a.split(';')[0].trim(), say: 'ru', la: q.a.split(';')[0].trim(), wf: q }));
+    });
     return cards;
   }
+  function wfParts(q) { return '<div class="sy-parts">' + q.parts.map(([e, m]) => '<span class="sy-part"><i>' + esc(e) + '</i><small>' + esc(m) + '</small></span>').join('<span class="sy-plus">+</span>') + '</div>' + (q.note ? '<div class="muted small">' + esc(q.note) + '</div>' : ''); }
   function shuffle(a) { for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; }
   /* Колода: сначала каждое слово ровно один раз (круг 1), затем дополнительные повторения —
      случайные слова, причём те, в которых ошибались, попадаются чаще. */
@@ -190,20 +196,24 @@
     h += '<div class="tr-group"><div class="tr-gh"><h3>Системы органов</h3><button class="link tr-all" data-g="__sys">выбрать все / снять</button></div><div class="tr-checks">' +
       D.systems.map(s => '<label class="tr-check"><input type="checkbox" data-sys="' + s.id + '"' + (st.systems.includes(s.id) ? ' checked' : '') + '><span>' + esc(s.title) + ' <em>' + s.rows.length + '</em></span></label>').join('') + '</div>' +
       '<div class="tr-sub">Что спрашивать по системам: ' + [1, 2, 3, 4, 5].map(c => '<label class="tr-pill"><input type="checkbox" data-col="' + c + '"' + (st.sysCols.includes(c) ? ' checked' : '') + '> ' + esc(COLS[c]) + '</label>').join('') + '</div></div>';
+    if (WF.length) h += '<div class="tr-group"><div class="tr-gh"><h3>Словообразование по системам</h3><button class="link tr-all" data-g="__wf">выбрать все / снять</button></div><p class="muted small">Вопросы как на сдаче: «Как называется графическая запись работы сердца?» → <i>cardiographia</i>. После ответа — состав термина.</p><div class="tr-checks">' +
+      WF.map(s => '<label class="tr-check"><input type="checkbox" data-wf="' + s.id + '"' + (st.wf.includes(s.id) ? ' checked' : '') + '><span>' + esc(s.title) + ' <em>' + s.wf.length + '</em></span></label>').join('') + '</div></div>';
     h += '<div class="tr-bar"><span id="tr-sel"></span><button class="btn" id="tr-next">Далее →</button></div>';
     root().innerHTML = h;
     const upd = () => {
       st.lists = $$('[data-list]').filter(x => x.checked).map(x => x.dataset.list);
       st.systems = $$('[data-sys]').filter(x => x.checked).map(x => x.dataset.sys);
       st.sysCols = $$('[data-col]').filter(x => x.checked).map(x => +x.dataset.col);
+      st.wf = $$('[data-wf]').filter(x => x.checked).map(x => x.dataset.wf);
       save();
-      const n = st.lists.reduce((s, id) => s + D.lists.find(l => l.id === id).items.length, 0) + st.systems.reduce((s, id) => s + D.systems.find(x => x.id === id).rows.length, 0);
-      $('#tr-sel').textContent = (st.lists.length + st.systems.length) ? 'Выбрано: ' + (st.lists.length + st.systems.length) + ' (' + n + ' слов/строк)' : 'Ничего не выбрано';
-      $('#tr-next').disabled = !(st.lists.length + st.systems.length);
+      const n = st.lists.reduce((s, id) => s + D.lists.find(l => l.id === id).items.length, 0) + st.systems.reduce((s, id) => s + D.systems.find(x => x.id === id).rows.length, 0) + st.wf.reduce((s, id) => s + WF.find(x => x.id === id).wf.length, 0);
+      const k = st.lists.length + st.systems.length + st.wf.length;
+      $('#tr-sel').textContent = k ? 'Выбрано: ' + k + ' (' + n + ' слов/строк/вопросов)' : 'Ничего не выбрано';
+      $('#tr-next').disabled = !k;
     };
     $$('input[type=checkbox]', root()).forEach(x => x.onchange = upd);
     $$('.tr-all').forEach(b => b.onclick = () => {
-      const boxes = b.dataset.g === '__sys' ? $$('[data-sys]') : $$('[data-list]').filter(x => D.lists.find(l => l.id === x.dataset.list).group === b.dataset.g);
+      const boxes = b.dataset.g === '__sys' ? $$('[data-sys]') : b.dataset.g === '__wf' ? $$('[data-wf]') : $$('[data-list]').filter(x => D.lists.find(l => l.id === x.dataset.list).group === b.dataset.g);
       const all = boxes.every(x => x.checked); boxes.forEach(x => x.checked = !all); upd();
     });
     $('#tr-next').onclick = screenStudy;
@@ -223,6 +233,11 @@
       const S = D.systems.find(s => s.id === id);
       h += '<div class="tr-list"><h3>' + esc(S.title) + '</h3><div class="tr-scroll"><table class="tr-table sys"><thead><tr><th>№</th>' + COLS.map(c => '<th>' + esc(c) + '</th>').join('') + '</tr></thead><tbody>' +
         S.rows.map((r, i) => '<tr><td class="n">' + (i + 1) + '</td>' + r.map((v, c) => { const isRu = c === 0 || c === 4 || c === 5; const hid = isRu ? st.hideB : st.hideA; return cell(v, hid && v).replace('<td', '<td data-k="' + (isRu ? 'B' : 'A') + '"'); }).join('') + '</tr>').join('') + '</tbody></table></div></div>';
+    });
+    st.wf.forEach(id => {
+      const S = WF.find(s => s.id === id); if (!S) return;
+      h += '<div class="tr-list"><h3>' + esc(S.title) + ' · словообразование</h3><div class="tr-scroll"><table class="tr-table"><thead><tr><th>№</th><th>Вопрос</th><th>Термин</th><th>Состав</th></tr></thead><tbody>' +
+        S.wf.map((q, i) => '<tr><td class="n">' + (i + 1) + '</td>' + cell(q.q, st.hideB).replace('<td', '<td data-k="B"') + cell(q.a.split(';')[0].trim(), st.hideA, true).replace('<td', '<td data-k="A"') + '<td class="small">' + q.parts.map(([e, m]) => '<i>' + esc(e) + '</i> — ' + esc(m)).join('; ') + '</td></tr>').join('') + '</tbody></table></div></div>';
     });
     h += '<div class="tr-bar"><button class="btn ghost" id="tr-back">← К выбору тем</button><button class="btn" id="tr-go">Тренировка →</button></div>';
     root().innerHTML = h;
@@ -307,6 +322,7 @@
       : (val.trim() ? (r.close ? '≈ Почти — проверьте написание. ' : '✗ Неверно. ') : 'Правильный ответ: ') + '<b>' + esc(c.show) + '</b>' + (val.trim() ? ' <button class="link" id="tr-accept">мой ответ тоже верный — засчитать</button>' : '');
     if (SP() && c.la && sayable(c.la)) fb.innerHTML += '<div class="tr-fb-say">' + (st.trans ? SP().trHtml(c.la) : '') + SP().btn(c.la, 'la') + (s.audio && c.say ? ' <span class="muted small">' + esc(c.q) + '</span>' : '') + '</div>';
     else if (s.audio && c.say) fb.innerHTML += '<div class="muted small">Задание: ' + esc(c.q) + '</div>';
+    if (c.wf) fb.innerHTML += wfParts(c.wf);
     fb.innerHTML += '<div class="muted small">Enter — дальше</div>';
     const acc = $('#tr-accept'); if (acc) acc.onclick = () => { rec.ok = true; rec.accepted = true; next(); };
     $('#tr-in').readOnly = true; $('#tr-form button').textContent = 'Дальше →'; $('#tr-form button').focus();
@@ -340,7 +356,8 @@
     window.scrollTo({ top: 0 });
   }
 
-  window.Trainer = { start: () => { if (!session) screenSelect(); }, _check: check, _build: buildCards, _st: st };
+  window.Trainer = { start: () => { if (!session) screenSelect(); }, _check: check, _build: buildCards, _st: st,
+    preselectWF: id => { if (!st.wf.includes(id)) st.wf.push(id); save(); screenSelect(); setTimeout(() => { const el = $('[data-wf="' + id + '"]'); if (el) el.closest('.tr-group').scrollIntoView({ block: 'center' }); }, 60); } };
   document.addEventListener('DOMContentLoaded', () => { if ($('#tr-root')) screenSelect(); });
   if (document.readyState !== 'loading' && $('#tr-root')) screenSelect();
 })();

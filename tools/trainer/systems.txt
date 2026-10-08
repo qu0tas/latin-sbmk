@@ -114,15 +114,15 @@
 Желудочек | ventriculus | | | |
 Селезёнка | lien | splen | | | спленомегалия
 ## Нервная система
-Голова | caput | cephal | | |
-Головной мозг | cerebrum | encephal | | |
-Мозговые оболочки | meninges | mening | | |
+Голова | caput | cephal | | | цефалгия
+Головной мозг | cerebrum | encephal; encephalon | encephalitis | энцефалит |
+Мозговые оболочки | meninx; meninges | mening | meningitis | менингит |
 Твёрдая мозговая оболочка | dura mater | | | |
 Мягкая мозговая оболочка | pia mater | | | |
-Нерв | nervus | neur | | |
-Ум | mens | phren | | |
-Слабоумие (без ума) | dementia | | | |
-Память | memoria | mnes; mnesia | | |
-Безумие | | mania | | |
-Ощущение | | aesthesia | | |
-Чувство | | pathia | | |
+Нерв | nervus | neur | neuritis | неврит | невралгия
+Ум | mens | phren | | | олигофрения; шизофрения
+Без ума | dementia | | | | деменция
+Память | memorium; memoria | mnesia; mnes | | | амнезия
+Безумие | | mania | | | наркомания
+Ощущение | | aesthesia | | | гиперестезия; гипоестезия; анестезия
+Чувство | | pathia | | | апатия; симпатия

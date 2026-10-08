@@ -19234,21 +19234,21 @@ window.LATIN_DICT = {
 "ru": "голова",
 "la": "caput",
 "el": "cephal",
-"note": ""
+"note": "цефалгия (cephalgia)"
 },
 {
 "sec": "Нервная система",
 "ru": "головной мозг",
 "la": "cerebrum",
-"el": "encephal",
-"note": ""
+"el": "encephal/encephalon",
+"note": "энцефалит (encephalitis)"
 },
 {
 "sec": "Нервная система",
 "ru": "мозговые оболочки",
-"la": "meninges",
+"la": "meninx",
 "el": "mening",
-"note": ""
+"note": "менингит (meningitis)"
 },
 {
 "sec": "Нервная система",
@@ -19269,49 +19269,49 @@ window.LATIN_DICT = {
 "ru": "нерв",
 "la": "nervus",
 "el": "neur",
-"note": ""
+"note": "неврит (neuritis), невралгия (neuralgia)"
 },
 {
 "sec": "Нервная система",
 "ru": "ум",
 "la": "mens",
 "el": "phren",
-"note": ""
+"note": "олигофрения (oligophrenia), шизофрения (schizophrenia)"
 },
 {
 "sec": "Нервная система",
-"ru": "слабоумие (без ума)",
+"ru": "без ума",
 "la": "dementia",
 "el": "",
-"note": ""
+"note": "деменция (dementia)"
 },
 {
 "sec": "Нервная система",
 "ru": "память",
 "la": "memoria",
 "el": "mnes/mnesia",
-"note": ""
+"note": "амнезия (amnesia); в пособии — memorium"
 },
 {
 "sec": "Нервная система",
 "ru": "безумие",
 "la": "",
 "el": "mania",
-"note": ""
+"note": "наркомания (narcomania)"
 },
 {
 "sec": "Нервная система",
 "ru": "ощущение",
 "la": "",
 "el": "aesthesia",
-"note": ""
+"note": "гиперестезия (hyperaesthesia), гипоестезия (hypaesthesia), анестезия (anaesthesia)"
 },
 {
 "sec": "Нервная система",
 "ru": "чувство",
 "la": "",
 "el": "pathia",
-"note": ""
+"note": "апатия (apathia), симпатия (sympathia)"
 }
 ],
 "elements": [

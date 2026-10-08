@@ -599,6 +599,7 @@
     const sh = $('#msheet'); if (sh) sh.hidden = true;
     if (window.matchMedia && matchMedia('(max-width:720px)').matches && init.done) window.scrollTo(0, 0);
     if (name === 'dict') renderDict();
+    if (name === 'sys' && window.Systems) window.Systems.show();
     if (location.hash !== '#' + name) history.replaceState(null, '', '#' + name);
   }
   function init() {
@@ -654,7 +655,7 @@
     $$('#dict-letters button').forEach(b => b.onclick = () => { const on = b.classList.contains('on'); $$('#dict-letters button').forEach(x => x.classList.remove('on')); if (!on) b.classList.add('on'); $('#dict-q').value = ''; dictLimit = 120; renderDict(); });
     renderElements();
     const h = location.hash.slice(1);
-    setTab(['la', 'ru', 'dict', 'el', 'gram', 'train', 'about'].includes(h) ? h : 'la');
+    setTab(['la', 'ru', 'dict', 'el', 'gram', 'sys', 'train', 'about'].includes(h) ? h : 'la');
     runLa(); runRu();
     init.done = true;
   }
