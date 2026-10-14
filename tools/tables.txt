@@ -100,15 +100,15 @@
 Дыхательная система | мокрота | sputum |  | 
 Дыхательная система | кашель | tussis |  | 
 Дыхательная система | кровохарканье | haemoptoe |  | 
-Нервная система | голова | caput | cephal | 
-Нервная система | головной мозг | cerebrum | encephal | 
-Нервная система | мозговые оболочки | meninges | mening | 
+Нервная система | голова | caput | cephal | цефалгия (cephalgia)
+Нервная система | головной мозг | cerebrum | encephal/encephalon | энцефалит (encephalitis)
+Нервная система | мозговые оболочки | meninx | mening | менингит (meningitis)
 Нервная система | твёрдая мозговая оболочка | dura mater |  | 
 Нервная система | мягкая мозговая оболочка | pia mater |  | 
-Нервная система | нерв | nervus | neur | 
-Нервная система | ум | mens | phren | 
-Нервная система | слабоумие (без ума) | dementia |  | 
-Нервная система | память | memoria | mnes/mnesia | 
-Нервная система | безумие |  | mania | 
-Нервная система | ощущение |  | aesthesia | 
-Нервная система | чувство |  | pathia | 
+Нервная система | нерв | nervus | neur | неврит (neuritis), невралгия (neuralgia)
+Нервная система | ум | mens | phren | олигофрения (oligophrenia), шизофрения (schizophrenia)
+Нервная система | без ума | dementia |  | деменция (dementia)
+Нервная система | память | memoria | mnes/mnesia | амнезия (amnesia); в пособии — memorium
+Нервная система | безумие |  | mania | наркомания (narcomania)
+Нервная система | ощущение |  | aesthesia | гиперестезия (hyperaesthesia), гипоестезия (hypaesthesia), анестезия (anaesthesia)
+Нервная система | чувство |  | pathia | апатия (apathia), симпатия (sympathia)
