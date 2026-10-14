@@ -76,7 +76,7 @@
       decl = 1; stem = genFull.slice(0, -2);
       put(p, 'nom', 'sg', la); put(p, 'gen', 'sg', stem + 'es', stem + 'ae'); put(p, 'dat', 'sg', stem + 'ae'); put(p, 'acc', 'sg', stem + 'en', stem + 'am'); put(p, 'abl', 'sg', stem + 'e', stem + 'a');
       put(p, 'nom', 'pl', stem + 'ae'); put(p, 'gen', 'pl', stem + 'arum'); put(p, 'dat', 'pl', stem + 'is'); put(p, 'acc', 'pl', stem + 'as'); put(p, 'abl', 'pl', stem + 'is');
-    } else if (/ei$/.test(g)) {
+    } else if (/ei$/.test(g) && /es$/.test(nomL)) { // 5 скл.: species, -ei (но oleum, -i — 2 скл.)
       decl = 5; stem = genFull.slice(0, -2);
       put(p, 'nom', 'sg', la); put(p, 'gen', 'sg', stem + 'ei'); put(p, 'dat', 'sg', stem + 'ei'); put(p, 'acc', 'sg', stem + 'em'); put(p, 'abl', 'sg', stem + 'e');
       put(p, 'nom', 'pl', stem + 'es'); put(p, 'gen', 'pl', stem + 'erum'); put(p, 'dat', 'pl', stem + 'ebus'); put(p, 'acc', 'pl', stem + 'es'); put(p, 'abl', 'pl', stem + 'ebus');
@@ -276,12 +276,18 @@
     };
     if (info.pos === 'noun') addPar(info.par, null);
     else if (info.pos === 'adj') { addPar(info.m, 'm'); addPar(info.f, 'f'); addPar(info.n, 'n'); }
-    else if (info.pos === 'verb') info.vforms.forEach(v => out.push({ form: v.form, verb: v.label }));
+    else if (info.pos === 'verb') info.vforms.forEach(v => out.push({ form: v.form, verb: v.label, vf: verbFeat(v.label) }));
     else if (info.pos === 'prep') info.forms.forEach(f => out.push({ form: f }));
     else out.push({ form: info.la });
     return out;
   }
 
+  /* Признаки глагольной формы по её подписи: наклонение, залог, лицо, число */
+  function verbFeat(label) {
+    const mood = /^инфинитив/.test(label) ? 'inf' : /повелит/.test(label) ? 'imp' : /сослагат/.test(label) ? 'conj' : /причастие/.test(label) ? 'part' : 'ind';
+    const m = label.match(/(\d) л\./);
+    return { mood, pass: /страд/.test(label), p: m ? +m[1] : (mood === 'imp' ? 2 : 0), n: /мн\. ч\./.test(label) ? 'pl' : 'sg' };
+  }
   function describeForm(f) {
     if (f.verb) return f.verb;
     if (!f.c) return '';
@@ -476,5 +482,5 @@
   }
   // какой русский падеж требует русский предлог
   const RU_PREP_CASE = { 'без': 'gen', 'для': 'gen', 'против': 'gen', 'от': 'gen', 'из': 'gen', 'до': 'gen', 'после': 'gen', 'около': 'gen', 'вокруг': 'gen', 'у': 'gen', 'с': 'ins', 'со': 'ins', 'перед': 'ins', 'между': 'ins', 'под': 'ins', 'над': 'ins', 'за': 'ins', 'в': 'prep', 'во': 'prep', 'на': 'prep', 'о': 'prep', 'при': 'prep', 'к': 'dat', 'ко': 'dat', 'по': 'dat', 'через': 'acc', 'посредством': 'gen' };
-  global.Morph = { normLa, normRu, joinEnding, analyzeEntry, allForms, describeForm, stemRu, ruNounCase, ruAdjCase, isRuAdj, ruGender, ruNounForm, ruAdjForm, ruPhraseForm, RU_PREP_CASE, CASES, CASE_RU, CASE_SHORT, NUM_RU, GEN_RU, PREP_CASE };
+  global.Morph = { verbFeat, normLa, normRu, joinEnding, analyzeEntry, allForms, describeForm, stemRu, ruNounCase, ruAdjCase, isRuAdj, ruGender, ruNounForm, ruAdjForm, ruPhraseForm, RU_PREP_CASE, CASES, CASE_RU, CASE_SHORT, NUM_RU, GEN_RU, PREP_CASE };
 })(typeof window !== 'undefined' ? window : globalThis);

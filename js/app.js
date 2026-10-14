@@ -63,7 +63,7 @@
   /* ---------- Русский индекс ---------- */
   function cleanRu(ru) {
     return ru.replace(/предл\.\s*с\s*(acc\.|abl\.)(\s*и\s*(acc\.|abl\.))?/g, '')
-      .replace(/^(глаг|местоим|числ|союз)\.?(\s*\([^)]*\))?\s*;\s*/, '').replace(/\b(нар|нескл)\.\s*/g, '').replace(/фарм\.\s*/g, '').replace(/\(сравн\. степень\)/g, '').trim();
+      .replace(/^(глаг|местоим|числ|союз)\.?(\s*\([^)]*\))?\s*;\s*/, '').replace(/(^|\s)(нар|нескл)\.\s*/g, '$1').replace(/фарм\.\s*/g, '').replace(/\(сравн\. степень\)/g, '').trim();
   }
   function senses(e) {
     if (e.abbr) return [];
@@ -111,7 +111,20 @@
     });
   });
 
-  /* ================= Вспомогательное ================= */
+  // одушевлённые: вин. п. = род. п. (лечить больного, больных)
+  const ANIM = /^(больн|врач|человек|людей|студент|пациент|ребен|детей|мужчин|женщин|учител|ученик|медик|фармацевт|друг|друз|животн|мать|матер|отц)/;
+  /* ---------- Русские формы глаголов: смешай, смешайте, смешать, смешивает ---------- */
+  const ruVerbIndex = new Map();
+  if (window.RuVerb) entries.forEach(e => {
+    if (e.info.pos !== 'verb') return;
+    const seen = new Set();
+    senses(e).filter(x => x.prio < 10).forEach(({ s, prio }) => RuVerb.ruForms(e.la, s).forEach(f => {
+      const key = f.ru + '|' + f.vf.mood + f.vf.p + f.vf.n + f.vf.pass;
+      if (seen.has(key)) return; seen.add(key);
+      ruAdd(ruVerbIndex, f.ru, { e, sense: s, words: f.ru.split(' '), prio, vf: f.vf, perf: f.perf });
+    }));
+  });
+
   function firstSense(e) {
     if (e.abbr) return e.ru.split(' — ').pop();
     const s = senses(e);
@@ -136,11 +149,28 @@
   function srcHtml(e) { return '<span class="src">' + esc(e.src) + '</span>'; }
 
   /* ================= Латынь → русский ================= */
+  const SENT_END = /[.!?;]/;
   function tokenizeLa(text) {
     const re = /[A-Za-zÀ-ÿĀ-ž]+(?:-[A-Za-zÀ-ÿĀ-ž]+)*/g;
     const out = []; let m;
-    while ((m = re.exec(text))) out.push({ w: m[0], k: M.normLa(m[0]) });
+    while ((m = re.exec(text))) {
+      const prev = out[out.length - 1];
+      if (prev) prev.after = text.slice(prev.end, m.index);
+      out.push({ w: m[0], k: M.normLa(m[0]), end: m.index + m[0].length, start: !prev || SENT_END.test(text.slice(prev.end, m.index).replace(/\([^)]*\)/g, '')), sent: !prev || /[.!?]/.test(text.slice(prev.end, m.index).replace(/\([^)]*\)/g, '')) });
+    }
+    if (out.length) out[out.length - 1].after = text.slice(out[out.length - 1].end);
     return out;
+  }
+  // знаки препинания после слова: «Misce. Da.» → «Смешай. Выдай.» (скобки и цифры не переносим)
+  const punctOf = t => tailOf(t.after);
+  // хвост после слова: знаки препинания и числа (дозировки): «Olei Ricini 30,0» → «касторового масла 30,0»
+  function tailOf(a) {
+    a = (a || '').replace(/\([^)]*\)/g, ' ');
+    const P = x => (x.match(/[.,!?;:]/g) || []).filter((c, i, arr) => i === 0 || c !== arr[i - 1]).join('').slice(0, 2);
+    const nums = a.match(/\d+(?:[.,]\d+)?%?/g);
+    if (!nums) return P(a);
+    const last = a.lastIndexOf(nums[nums.length - 1]) + nums[nums.length - 1].length;
+    return P(a.split(/\d/)[0]) + ' ' + nums.join(' ') + P(a.slice(last));
   }
   function lemmasOf(k) { return new Set((laIndex.get(k) || []).map(x => x.e.id)); }
   const END_RE = /(orum|arum|ibus|ium|um|us|ae|am|as|os|is|a|i|o|e|em|es)$/;
@@ -211,10 +241,23 @@
     const items = [];
     for (let i = 0; i < toks.length;) {
       const p = matchPhraseAt(toks, i);
-      if (p) { items.push({ type: 'phrase', words: toks.slice(i, i + p.words.length).map(t => t.w), e: p.e }); i += p.words.length; continue; }
+      const base = { start: toks[i].start, cap: toks[i].sent && /^[A-ZÀ-ÞĀ-Ž]/.test(toks[i].w) };
+      if (p && p.e.abbr) { // точка — часть сокращения (Rp., Sol.), а не конец предложения
+        const last = toks[i + p.words.length - 1];
+        if (/[.]$/.test(p.e.la.split(' — ')[0].trim()) && /^\s*\./.test(last.after || '')) {
+          last.after = last.after.replace(/^\s*\./, ' ');
+          const nx = toks[i + p.words.length]; if (nx) { nx.start = /[.!?;]/.test(last.after); nx.sent = /[.!?]/.test(last.after); }
+        }
+      }
+      if (p) { const last = toks[i + p.words.length - 1]; items.push(Object.assign(base, { type: 'phrase', words: toks.slice(i, i + p.words.length).map(t => t.w), e: p.e, punct: punctOf(last) })); i += p.words.length; continue; }
       const an = analyzeLaWord(toks[i].k);
-      if (an.length) items.push({ type: 'word', word: toks[i].w, an });
-      else items.push({ type: 'unknown', word: toks[i].w, dec: decompose(toks[i].k) });
+      if (an.length) {
+        // глагол или существительное (signa — «обозначь» / «знаки»): в начале предложения — глагол
+        const vi = an.findIndex(g => g.e.info.pos === 'verb');
+        let excl = false; for (let j = i; j < toks.length; j++) { const m = /[.!?;]/.exec(toks[j].after || ''); if (m) { excl = m[0] === '!'; break; } }
+        if (vi > 0 && toks[i].start && (M.normLa(an[0].e.la) !== toks[i].k || excl) && (an[vi].raw || []).some(f => f.vf && f.vf.mood !== 'inf' && f.vf.mood !== 'part')) an.unshift(an.splice(vi, 1)[0]);
+        items.push(Object.assign(base, { type: 'word', word: toks[i].w, an, punct: punctOf(toks[i]) }));
+      } else items.push(Object.assign(base, { type: 'unknown', word: toks[i].w, dec: decompose(toks[i].k), punct: punctOf(toks[i]) }));
       i++;
     }
     resolveLa(items);
@@ -232,8 +275,38 @@
       return c === 'abl' ? 'ins' : c;
     };
     const RU_LABEL = { nom: 'им.', gen: 'род.', dat: 'дат.', acc: 'вин.', ins: 'твор.', prep: 'предл.' };
+    // число сказуемого в предложении — для выбора числа подлежащего (Tabulettae obducantur)
+    const clauseNum = new Map();
+    for (let i = 0, cs = 0; i < items.length; i++) {
+      const it = items[i];
+      if (it.start) cs = i;
+      if (it.type === 'word' && it.an[0].e.info.pos === 'verb') {
+        const f = pickVerbForm(it.an[0].raw || [], false);
+        if (f && f.vf && f.vf.p === 3 && !clauseNum.has(cs)) clauseNum.set(cs, f.vf.n);
+      }
+      it.cs = cs;
+    }
+    let verbObj = false, neg = null, prevVerb = false;
     items.forEach(it => {
       it.ru = null; it.pick = null;
+      if (it.start) { nouns = 0; gov = null; ruPrep = null; lastNoun = null; verbObj = false; neg = null; prevVerb = false; }
+      const k0 = it.type === 'word' ? M.normLa(it.word) : '';
+      if (k0 === 'noli' || k0 === 'nolite') { neg = k0 === 'nolite' ? 'pl' : 'sg'; it.ru = ''; it.neg = true; return; }
+      if (it.type === 'word' && it.an[0].e.info.pos === 'verb') {
+        const e = it.an[0].e;
+        let f = neg ? (it.an[0].raw || []).find(x => x.vf && x.vf.mood === 'inf') : null;
+        f = f || pickVerbForm(it.an[0].raw || [], prevVerb);
+        it.pick = f;
+        if (items.filter(x => x.type !== 'br').length === 1 && M.normLa(it.word) === M.normLa(e.la)) { it.ru = firstSense(e); it.dictForm = true; return; } // словарная форма: lego — читать
+        const vf = f && f.vf ? (neg ? { mood: 'imp', pass: false, p: 2, n: neg } : f.vf) : null;
+        it.ru = (vf && window.RuVerb && RuVerb.translate(e.la, firstSense(e), vf, { neg: !!neg })) || firstSense(e);
+        if (neg) { it.negForm = neg; neg = null; }
+        if (vf && !vf.pass) verbObj = true;
+        prevVerb = true; gov = null; ruPrep = null;
+        return;
+      }
+      if (it.type === 'word' && ['adv', 'indecl'].includes(it.an[0].e.info.pos)) { /* наречия и союзы не прерывают «глагол + инфинитив» */ }
+      else prevVerb = false;
       if (it.type === 'unknown') { gov = null; ruPrep = null; nouns++; lastNoun = null; return; }
       if (it.type === 'phrase') {
         const head = it.e.la.split(/\s+/)[0];
@@ -256,13 +329,18 @@
       if (pos === 'prep') { gov = e.info.governs; latPrep = M.normLa(it.word); it.ru = firstSense(e); ruPrep = M.normRu(it.ru.split(/\s+/)[0]); return; }
       if (pos === 'noun') {
         let f = null;
+        const sn = clauseNum.get(it.cs);
         if (gov) f = pickForm(raw, x => gov.includes(x.c) && x.n === 'sg') || pickForm(raw, x => gov.includes(x.c));
+        else if (raw.length && raw.every(x => x.c === 'acc')) f = pickForm(raw, x => x.n === 'sg') || raw[0]; // однозначный вин. п.: aegrotos, aquam
+        else if (verbObj && nouns === 0 && pickForm(raw, x => x.c === 'acc')) f = pickForm(raw, x => x.c === 'acc' && x.n === 'sg') || pickForm(raw, x => x.c === 'acc'); // прямое дополнение: Recipe aquam — возьми воду
+        else if (nouns === 0 && sn) f = pickForm(raw, x => x.c === 'nom' && x.n === sn) || pickForm(raw, x => x.c === 'nom');
         else if (nouns === 0) f = pickForm(raw, x => x.c === 'nom' && x.n === 'sg') || pickForm(raw, x => x.c === 'nom');
-        else f = pickForm(raw, x => x.c === 'gen' && x.n === 'sg') || pickForm(raw, x => x.c === 'gen');
+        else f = pickForm(raw, x => x.c === 'gen' && x.n === 'sg') || pickForm(raw, x => x.c === 'gen') || pickForm(raw, x => x.c === 'abl'); // numero — числом
         f = f || raw[0] || { c: 'nom', n: 'sg' };
-        const rc = ruCaseOf(f.c);
+        let rc = ruCaseOf(f.c);
         it.pick = f; it.ruC = rc;
         const s = firstSense(e);
+        if (rc === 'acc' && ANIM.test(M.normRu(s))) rc = 'gen'; // одушевлённые: aegrotos curant — лечат больных
         it.ru = M.ruPhraseForm(s, rc, f.n) || s;
         nouns++; gov = null; ruPrep = null;
         lastNoun = { it, c: f.c, n: f.n, rc, g: e.info.gender === 'f' || e.info.gender === 'n' ? e.info.gender : 'm', ruG: M.ruGender(s.split(' ').filter(w => !M.isRuAdj(w)).pop() || s) };
@@ -276,45 +354,104 @@
         const s = firstSense(e);
         const agree = lastNoun && f && f.c === lastNoun.c && f.n === lastNoun.n;
         it.ru = (agree && M.ruPhraseForm(s, lastNoun.rc, f.n, lastNoun.ruG)) || s;
+        if (!agree) it.fwd = true; // определение перед существительным: tales doses — такие дозы
         return;
       }
       it.ru = firstSense(e); gov = null; ruPrep = null;
     });
+    // определения перед существительным согласуем со следующим существительным
+    items.forEach((it, i) => {
+      if (!it.fwd) return;
+      const nx = items.slice(i + 1).find(x => x.type !== 'word' || x.an[0].e.info.pos !== 'adj');
+      if (!nx || nx.type !== 'word' || nx.an[0].e.info.pos !== 'noun' || !nx.pick || nx.cs !== it.cs) return;
+      const ne = nx.an[0].e, g = ne.info.gender === 'f' || ne.info.gender === 'n' ? ne.info.gender : 'm';
+      const f = (it.an[0].raw || []).find(x => x.c === nx.pick.c && x.n === nx.pick.n && x.g === g);
+      if (!f) return;
+      it.pick = f;
+      const s = firstSense(it.an[0].e), ns = firstSense(ne);
+      it.ru = M.ruPhraseForm(s, nx.ruC, f.n, M.ruGender(ns.split(' ').filter(w => !M.isRuAdj(w)).pop() || ns)) || it.ru;
+    });
+    // «Auscultare disce!» — по-русски сначала глагол: «Учись выслушивать!»
+    for (let i = 0; i + 1 < items.length; i++) {
+      const a = items[i], b = items[i + 1];
+      const isV = x => x.type === 'word' && x.an[0].e.info.pos === 'verb' && x.pick && x.pick.vf;
+      if (isV(a) && isV(b) && a.pick.vf.mood === 'inf' && b.pick.vf.mood !== 'inf' && !b.start && !a.punct) {
+        ['start', 'cap', 'punct'].forEach(k => { const t = a[k]; a[k] = b[k]; b[k] = t; });
+        items[i] = b; items[i + 1] = a; i++;
+      }
+    }
   }
 
+  // форма глагола: повелительное > сослагательное страд. > страд. > инфинитив (после другого глагола — инфинитив) > прочие
+  const VPRIO = f => !f.vf ? 9 : f.vf.mood === 'imp' ? 0 : f.vf.mood === 'conj' && f.vf.pass ? 1 : f.vf.pass ? 2 : f.vf.mood === 'inf' ? 3 : f.vf.mood === 'ind' ? 4 : f.vf.mood === 'conj' ? 5 : 6;
+  function pickVerbForm(raw, afterVerb) {
+    if (afterVerb) { const inf = raw.find(f => f.vf && f.vf.mood === 'inf'); if (inf) return inf; }
+    return raw.slice().sort((a, b) => VPRIO(a) - VPRIO(b))[0] || null;
+  }
+  const capFirst = s => s ? s[0].toUpperCase() + s.slice(1) : s;
   function renderLa(items) {
     const out = $('#la-out'), det = $('#la-details');
     if (!items.length) { out.innerHTML = '<span class="placeholder">Здесь появится перевод</span>'; det.innerHTML = ''; return; }
-    out.innerHTML = items.map(it => {
-      if (it.type === 'phrase') return '<span class="tw ok" data-id="' + it.e.id + '">' + esc(it.ru || firstSense(it.e)) + '</span>';
-      if (it.type === 'word') return '<span class="tw ok" data-id="' + it.an[0].e.id + '">' + esc(it.ru || firstSense(it.an[0].e)) + '</span>';
-      return '<span class="tw bad" title="Нет в словаре">' + esc(it.word) + '?</span>';
-    }).join(' ');
+    let capNext = false;
+    out.innerHTML = items.map((it, i) => {
+      if (it.type === 'br') return '<br>';
+      if (it.neg) { capNext = capNext || (it.start && it.cap); return ''; }
+      const cap = (it.start && it.cap) || capNext; capNext = false;
+      const pu = it.punct ? esc(it.punct) : '';
+      const tx = s => esc(cap ? capFirst(s) : (it.type === 'phrase' && it.e.whole && !/^[A-ZА-ЯЁ]{2}/.test(s) ? s[0].toLowerCase() + s.slice(1) : s));
+      if (it.type === 'phrase') return '<span class="tw ok" data-id="' + it.e.id + '">' + tx(it.ru || firstSense(it.e)) + pu + '</span>';
+      if (it.type === 'word') return '<span class="tw ok" data-id="' + it.an[0].e.id + '">' + tx(it.ru || firstSense(it.an[0].e)) + pu + '</span>';
+      return '<span class="tw bad" title="Нет в словаре">' + esc(it.word) + '?' + pu + '</span>';
+    }).filter(Boolean).join(' ');
     det.innerHTML = items.map(it => {
+      if (it.type === 'br') return '';
       if (it.type === 'phrase') {
-        return card(it.words.join(' '), '<div class="cand">' + lemmaHtml(it.e) + ' — <b>' + esc(it.e.ru) + '</b><div class="meta">' + posLabel(it.e) + ' · ' + srcHtml(it.e) + '</div><button class="link" data-id="' + it.e.id + '">подробнее</button></div>');
+        return card(it.words.join(' '), '<div class="cand">' + lemmaHtml(it.e) + ' — <b>' + esc(it.e.ru) + '</b><div class="meta">' + posLabel(it.e) + ' · ' + srcHtml(it.e) + '</div><button class="link" data-id="' + it.e.id + '">подробнее</button></div>', false, true);
       }
       if (it.type === 'word') {
         const pd = it.pick ? M.describeForm(it.pick) : '';
-        return card(it.word, it.an.map((g, gi) => '<div class="cand">' + lemmaHtml(g.e) + ' — <b>' + esc(g.e.ru) + '</b>' +
+        const vnote = it.neg ? '<div class="forms"><span class="chip ghost">noli / nolite + инфинитив = запрет: «не делай(те)!»</span></div>'
+          : it.negForm ? '<div class="forms"><span class="chip acc">не ' + esc(it.ru.replace(/^не /, '')) + '</span><span class="chip ghost">инфинитив после noli' + (it.negForm === 'pl' ? 'te' : '') + ' — запрет</span></div>'
+          : it.dictForm ? '<div class="forms"><span class="chip acc">' + esc(it.ru) + '</span><span class="chip ghost">словарная форма (1 л. ед. ч.) — в словаре переводится инфинитивом</span></div>'
+          : it.pick && it.pick.vf ? '<div class="forms"><span class="chip acc">' + esc(it.ru) + '</span><span class="chip ghost">' + esc(VNOTE(it.pick.vf)) + '</span></div>' : '';
+        return card(it.word, vnote + it.an.map((g, gi) => '<div class="cand">' + lemmaHtml(g.e) + ' — <b>' + esc(g.e.ru) + '</b>' +
           (g.forms.length ? '<div class="forms">' + g.forms.map(f => '<span class="chip' + (gi === 0 && f === pd && g.forms.length > 1 ? ' acc2' : '') + '">' + esc(f) + '</span>').join('') + '</div>' : '') +
           '<div class="meta">' + posLabel(g.e) + ' · ' + srcHtml(g.e) + (g.e.el ? ' · греч. элемент: <i>' + esc(g.e.el) + '</i>' : '') + '</div>' +
-          '<button class="link" data-id="' + g.e.id + '">' + (['noun', 'adj', 'verb'].includes(g.e.info.pos) ? 'таблица форм' : 'подробнее') + '</button></div>').join(''));
+          '<button class="link" data-id="' + g.e.id + '">' + (['noun', 'adj', 'verb'].includes(g.e.info.pos) ? 'таблица форм' : 'подробнее') + '</button></div>').join(''), false, true);
       }
       let html = '<div class="cand miss">Нет в словаре учебника — слово не переведено.</div>';
       if (it.dec) {
         html += '<div class="cand hint"><div class="hint-t">Подсказка: разбор по терминоэлементам из таблиц</div>' +
           it.dec.map(x => x.el ? '<span class="chip el"><i>' + esc(x.p) + '</i> — ' + esc(x.el.ru) + '</span>' : '<span class="chip ghost">' + esc(x.p) + '</span>').join('<span class="plus">+</span>') + '</div>';
       }
-      return card(it.word, html, true);
+      return card(it.word, html, true, true);
     }).join('');
   }
-  function card(title, body, bad) {
-    return '<div class="wcard' + (bad ? ' bad' : '') + '"><div class="wcard-h">' + esc(title) + '</div>' + body + '</div>';
+  function VNOTE(vf) {
+    if (vf.mood === 'imp') return 'повелит. накл., ' + (vf.n === 'pl' ? 'мн. ч. — «делайте!»' : 'ед. ч. — «делай!»');
+    if (vf.mood === 'conj' && vf.pass) return 'сослагат. накл., страд. залог — «пусть будет …», в рецепте переводится инфинитивом';
+    if (vf.mood === 'conj') return 'сослагат. накл. — «пусть …»';
+    if (vf.mood === 'inf') return 'инфинитив — «делать»';
+    if (vf.mood === 'part') return 'причастие';
+    return 'наст. вр., ' + (vf.pass ? 'страд. залог, ' : '') + vf.p + ' л. ' + (vf.n === 'pl' ? 'мн. ч.' : 'ед. ч.');
+  }
+  function card(title, body, bad, la) {
+    const sp = la && window.Speech ? ' ' + Speech.trHtml(title) + Speech.btn(title, 'la') : '';
+    return '<div class="wcard' + (bad ? ' bad' : '') + '"><div class="wcard-h">' + esc(title) + sp + '</div>' + body + '</div>';
   }
 
   /* ================= Русский → латынь ================= */
-  function tokenizeRu(text) { return (M.normRu(text).match(/[а-я]+(?:-[а-я]+)*/g) || []); }
+  function tokenizeRu(text) {
+    const t = M.normRu(text), re = /[а-я]+(?:-[а-я]+)*/g, out = [], ends = new Set(), punct = {};
+    let m, last = -1;
+    while ((m = re.exec(t))) {
+      if (out.length) { const gap = t.slice(last, m.index); if (/[.!?;]/.test(gap.replace(/\d[.,]\d/g, ''))) ends.add(out.length - 1); const p = tailOf(gap); if (p) punct[out.length - 1] = p; }
+      out.push(m[0]); last = m.index + m[0].length;
+    }
+    if (out.length) { const p = tailOf(t.slice(last)); if (p) punct[out.length - 1] = p; }
+    out.ends = ends; out.punct = punct; out.caps = new Set();
+    return out;
+  }
   const fmCache = new Map();
   function ruFormsOf(d) {
     if (fmCache.has(d)) return fmCache.get(d);
@@ -341,6 +478,8 @@
       if (ea !== eb) return ea - eb;
       const fa = formMatch(a, inputWords), fb = formMatch(b, inputWords);
       if (fa !== fb) return fa - fb;
+      const ga = genderMatch(a, inputWords), gb = genderMatch(b, inputWords);
+      if (ga !== gb) return ga - gb;
       const sa = /^Городкова/.test(a.e.src) ? 1 : 0, sb = /^Городкова/.test(b.e.src) ? 1 : 0; // основной учебник — Кравченко
       if (sa !== sb) return sa - sb;
       if (a.prio !== b.prio) return a.prio - b.prio;
@@ -352,20 +491,38 @@
   function translateRu(text) {
     const toks = tokenizeRu(text);
     const items = [];
+    const raw = (text.match(/[А-Яа-яЁё]+(?:-[А-Яа-яЁё]+)*/g) || []);
     for (let i = 0; i < toks.length;) {
       let found = null;
+      // глагольные формы (точное совпадение): «смешай», «не вреди» → noli nocere
+      for (const neg of toks[i] === 'не' && i + 1 < toks.length ? [true, false] : [false]) {
+        const off = neg ? 1 : 0;
+        for (let len = Math.min(6, toks.length - i - off); len >= 1 && !found; len--) {
+          const ws0 = toks.slice(i + off, i + off + len);
+          let vh = ruVerbIndex.get(ws0.join(' '));
+          if (vh && neg) vh = vh.filter(v => v.vf.mood === 'imp');
+          if (vh && vh.length) found = { words: neg ? ['не'].concat(ws0) : ws0, cands: rankCands(vh, ws0), len: len + off, vf: vh[0].vf, perf: vh[0].perf, neg };
+        }
+        if (found) break;
+      }
+      const vfound = found; found = null;
       for (let len = Math.min(6, toks.length - i); len >= 1 && !found; len--) {
-        const ws = toks.slice(i, i + len);
+        const ws0 = toks.slice(i, i + len);
+        const ws = ws0;
         const st = ws.map(M.stemRu);
         let c = ruIndex.get(st.join(' '));
         if (!c && len > 1) c = ruIndexSorted.get(st.slice().sort().join(' '));
         if (c) c = c.filter(v => ws.every((w, j) => M.stemRu(w).length >= 3 || v.words.includes(w)));
         if (c && c.length) found = { words: ws, cands: rankCands(c, ws), len };
       }
-      if (found) { items.push({ type: 'match', words: found.words, cands: found.cands, sel: 0 }); i += found.len; }
-      else {
+      if (vfound && (!found || vfound.len >= found.len)) found = vfound; // словосочетание длиннее глагола — берём словосочетание
+      if (found) {
+        const j = i + found.len - 1;
+        items.push({ type: 'match', words: found.words, cands: found.cands, sel: 0, vf: found.vf, perf: found.perf, neg: found.neg, vfs: found.vfs, end: toks.ends.has(j), punct: toks.punct[j] || '', start: i === 0 || toks.ends.has(i - 1), cap: /^[А-ЯЁ]/.test(raw[i] || '') });
+        i += found.len;
+      } else {
         const el = ruElIndex.get(M.stemRu(toks[i]));
-        items.push({ type: 'unknown', word: toks[i], el: el || null }); i++;
+        items.push({ type: 'unknown', word: toks[i], el: el || null, end: toks.ends.has(i), punct: toks.punct[i] || '', start: i === 0 || toks.ends.has(i - 1), cap: /^[А-ЯЁ]/.test(raw[i] || '') }); i++;
       }
     }
     return items;
@@ -380,7 +537,14 @@
     const dw = dictWords[hi];
     const st = M.stemRu(dw);
     const iw = item.words.find(w => M.stemRu(w) === st) || item.words[Math.min(hi, item.words.length - 1)];
+    if (M.isRuAdj(dw) && M.isRuAdj(iw) || /(ого|его|ому|ему|ым|ых|ыми)$/.test(M.normRu(iw)) && M.isRuAdj(dw)) return M.ruAdjCase(iw); // субстантивированные: больной → больного
     return M.ruNounCase(iw, dw);
+  }
+  const ruAdjGender = w => /(ая|яя|ую|юю)$/.test(w) ? 'f' : /(ое|ее)$/.test(w) ? 'n' : /(ый|ий|ого|его|ому|ему|ым|им)$/.test(w) ? 'm' : '';
+  function genderMatch(c, ws) { // «больного» — aegrotus (больной), а не aegrota (больная)
+    if (c.words.length !== 1 || ws.length !== 1 || !M.isRuAdj(c.words[0])) return 0;
+    const gi = ruAdjGender(M.normRu(ws[0])), gd = ruAdjGender(c.words[0]) || 'm';
+    return gi ? (gi !== gd ? 1 : 0) : (gd === 'm' ? 0 : 1);
   }
   function latinForm(e, c, n, g) {
     const i = e.info;
@@ -426,11 +590,14 @@
     const isNoun = it => it.type === 'match' && ['noun', 'phrase', 'indecl'].includes(it.cands[it.sel].e.info.pos) && !(it.cands[it.sel].e.info.pos === 'indecl' && it.cands[it.sel].e.info.la.length < 3);
     const isAdj = it => it.type === 'match' && it.cands[it.sel].e.info.pos === 'adj';
     const isPrep = it => it.type === 'match' && it.cands[it.sel].e.info.pos === 'prep';
-    let nounsSeen = 0;
+    let nounsSeen = 0, verbSeen = false;
+    const isVerb = it => it.type === 'match' && it.cands[it.sel].e.info.pos === 'verb' && it.vf;
     items.forEach((it, idx) => {
       it.lat = null; it.note = '';
+      if (it.start) { nounsSeen = 0; verbSeen = false; }
       if (it.type !== 'match') { if (!M.isRuAdj(it.word) && it.word.length > 2) nounsSeen++; return; }
       const e = it.cands[it.sel].e;
+      if (isVerb(it)) { it.afterVerb = verbSeen; if (!(it.perf && it.vf.mood === 'inf' && !verbSeen)) verbSeen = true; return; }
       if (isNoun(it) && e.info.pos !== 'indecl') {
         const opts = ruCaseFor(it);
         let pick = opts[0];
@@ -442,6 +609,12 @@
           const c = ((acc || unchanged) && gov.includes('acc')) ? 'acc' : (gov[0] || pick.c);
           pick = { c, n: (opts.find(o => o.n === 'pl') && !opts.find(o => o.n === 'sg')) ? 'pl' : pick.n };
           it.note = 'после предлога';
+        } else if (verbSeen && (nounsSeen === 0 || isVerb(items[prev] || {})) && (opts.find(o => o.c === 'acc') || (ANIM.test(it.words[it.words.length - 1]) && opts.find(o => o.c === 'gen')))) { // прямое дополнение: возьми воду — recipe aquam; лечит больного — curat aegrotum
+          const a = opts.find(o => o.c === 'acc') || opts.find(o => o.c === 'gen');
+          pick = { c: 'acc', n: a.n };
+          it.note = 'прямое дополнение';
+        } else if (verbSeen && nounsSeen === 0 && opts.find(o => o.c === 'gen')) { // возьми масла касторового — recipe olei Ricini
+          pick = opts.find(o => o.c === 'gen');
         } else if (nounsSeen === 0) {
           pick = opts.find(o => o.c === 'nom') || opts[0];
         } else {
@@ -472,6 +645,27 @@
       }
       it.lat = latinForm(e, it.c, it.n, it.g);
     });
+    // глаголы: форма по русской форме (смешай → misce, смешайте → miscete, смешать → misceatur)
+    items.forEach((it, idx) => {
+      if (!isVerb(it)) return;
+      const e = it.cands[it.sel].e;
+      const vfs = (e.info.vforms || []).map(v => ({ form: v.form, vf: M.verbFeat(v.label) }));
+      const find = q => (vfs.find(x => x.vf.mood === q.mood && !!x.vf.pass === !!q.pass && (!q.p || x.vf.p === q.p) && (q.mood === 'inf' || x.vf.n === q.n)) || {}).form;
+      let q = it.vf;
+      if (it.neg) { it.lat = (q.n === 'pl' ? 'nolite ' : 'noli ') + find({ mood: 'inf' }); it.vnote = 'noli' + (q.n === 'pl' ? 'te' : '') + ' + инфинитив — запрет'; return; }
+      const single = items.length === 1 && !it.punct;
+      if (single && q.mood === 'inf') { it.lat = e.la; it.alt = find({ mood: 'inf' }); it.vq = q; it.vnote = 'словарная форма (1 л. ед. ч.)'; return; }
+      if (q.mood === 'inf' && it.perf && !it.afterVerb) {
+        // «Смешать. Выдать.» в рецепте — сослагательное наклонение страд. залога; число — по подлежащему
+        let n = 'sg';
+        for (let j = idx - 1; j >= 0 && !items[j].end; j--) if (items[j].type === 'match' && items[j].n && items[j].c === 'nom') { n = items[j].n; break; }
+        q = { mood: 'conj', pass: true, p: 3, n };
+        it.alt = find({ mood: 'inf' });
+      }
+      it.lat = find(q) || e.la;
+      it.vq = q;
+      it.vnote = window.RuVerb ? RuVerb.FORM_RU(q) : '';
+    });
     items.forEach(it => { if (it.type === 'match' && !it.lat) it.lat = it.cands[it.sel].e.info.pos === 'verb' ? it.cands[it.sel].e.la : it.cands[it.sel].e.la.replace(/,.*$/, ''); });
     // латинский порядок: существительное, затем его определения-прилагательные
     const order = [];
@@ -497,9 +691,10 @@
     const out = $('#ru-out'), det = $('#ru-details');
     if (!items.length) { out.innerHTML = '<span class="placeholder">Здесь появится перевод</span>'; det.innerHTML = ''; return; }
     const ordered = buildLatin(items);
-    out.innerHTML = ordered.map(it => it.type === 'match'
-      ? '<span class="tw ok" data-id="' + it.cands[it.sel].e.id + '">' + esc(it.lat) + '</span>'
-      : '<span class="tw bad" title="Нет в словаре">' + esc(it.word) + '?</span>').join(' ');
+    const capL = (it, s) => it.start && it.cap && s ? s[0].toUpperCase() + s.slice(1) : s;
+    out.innerHTML = ordered.map(it => (it.type === 'match'
+      ? '<span class="tw ok" data-id="' + it.cands[it.sel].e.id + '">' + esc(capL(it, it.lat) + (it.punct || '')) + '</span>'
+      : '<span class="tw bad" title="Нет в словаре">' + esc(it.word + '?' + (it.punct || '')) + '</span>')).join(' ');
     det.innerHTML = items.map((it, idx) => {
       if (it.type === 'unknown') {
         let html = '<div class="cand miss">Нет в словаре учебника — слово не переведено.</div>';
@@ -509,6 +704,7 @@
       const c = it.cands[it.sel];
       const e = c.e;
       let form = '';
+      if (it.vnote) form = '<div class="forms"><span class="chip acc">' + esc(it.lat) + '</span><span class="chip">' + esc(it.vnote) + '</span>' + (it.alt ? '<span class="chip ghost">или инфинитив: ' + esc(it.alt) + '</span>' : '') + '</div>';
       if (it.c && ['noun', 'adj', 'phrase'].includes(e.info.pos)) {
         form = '<div class="forms"><span class="chip acc">' + esc(it.lat) + '</span><span class="chip">' + M.CASE_SHORT[it.c] + ', ' + M.NUM_RU[it.n] + (e.info.pos === 'adj' ? ', ' + M.GEN_RU[it.g] : '') + '</span>' + (it.note ? '<span class="chip ghost">' + esc(it.note) + '</span>' : '') + '</div>';
         if (it.opts && it.opts.length > 1 && e.info.pos === 'noun') form += '<div class="meta">Возможны также: ' + it.opts.slice(1).map(o => '<i>' + esc(latinForm(e, o.c, o.n)) + '</i> (' + M.CASE_SHORT[o.c] + ', ' + M.NUM_RU[o.n] + ')').join('; ') + '</div>';
@@ -528,7 +724,7 @@
   function openEntry(id) {
     const e = entries[id]; if (!e) return;
     const i = e.info;
-    let body = '<div class="m-head">' + lemmaHtml(e) + '</div><div class="m-ru">' + esc(e.ru) + '</div>' +
+    let body = '<div class="m-head">' + lemmaHtml(e) + (window.Speech ? ' ' + Speech.btn(e.la, 'la') + '<div class="m-trs">' + Speech.trHtml(e.la) + '</div>' : '') + '</div><div class="m-ru">' + esc(e.ru) + '</div>' +
       '<div class="meta">' + posLabel(e) + ' · ' + srcHtml(e) + (e.el ? ' · греч. терминоэлемент: <i>' + esc(e.el) + '</i>' : '') + (e.sec ? ' · ' + esc(e.sec) : '') + '</div>';
     if (i.pos === 'noun') body += paradigmTable(i.par);
     if (i.pos === 'adj') {
@@ -569,7 +765,7 @@
     } else if (letter) list = sorted.filter(e => M.normLa(e.la)[0] === letter);
     $('#dict-count').textContent = 'Найдено: ' + list.length;
     $('#dict-list').innerHTML = list.slice(0, dictLimit).map(e =>
-      '<li data-id="' + e.id + '"><div>' + lemmaHtml(e) + '</div><div class="d-ru">' + esc(e.ru) + '</div><div class="d-meta">' + esc(e.src) + '</div></li>').join('') +
+      '<li data-id="' + e.id + '"><div>' + lemmaHtml(e) + (window.Speech ? Speech.btn(e.la, 'la', 'sm') : '') + '</div><div class="d-ru">' + esc(e.ru) + '</div><div class="d-meta">' + esc(e.src) + '</div></li>').join('') +
       (list.length > dictLimit ? '<li class="more"><button id="dict-more">Показать ещё</button></li>' : '');
     const more = $('#dict-more'); if (more) more.onclick = () => { dictLimit += 200; renderDict(); };
   }
@@ -581,8 +777,8 @@
     });
     const secs = [...new Set(RAW.tables.map(t => t.sec))];
     secs.forEach(s => {
-      html += '<h3>' + esc(s) + '</h3><table class="par tbl"><thead><tr><th>Русский</th><th>Латинский</th><th>Греческий элемент</th><th>Примеры</th></tr></thead><tbody>' +
-        RAW.tables.filter(t => t.sec === s).map(t => '<tr><td>' + esc(t.ru) + '</td><td>' + esc(t.la || '—') + '</td><td><i>' + esc(t.el || '') + '</i></td><td>' + esc(t.note || '') + '</td></tr>').join('') + '</tbody></table>';
+      html += '<h3>' + esc(s) + '</h3><div class="tr-scroll"><table class="par tbl"><thead><tr><th>Русский</th><th>Латинский</th><th>Греческий элемент</th><th>Примеры</th></tr></thead><tbody>' +
+        RAW.tables.filter(t => t.sec === s).map(t => '<tr><td>' + esc(t.ru) + '</td><td>' + esc(t.la || '—') + '</td><td><i>' + esc(t.el || '') + '</i></td><td>' + esc(t.note || '') + '</td></tr>').join('') + '</tbody></table></div>';
     });
     $('#el-body').innerHTML = html;
   }
@@ -592,14 +788,31 @@
   function setTab(name) {
     $$('.tab').forEach(t => { t.classList.toggle('on', t.dataset.tab === name); if (t.dataset.tab === name && t.scrollIntoView) t.scrollIntoView({ block: 'nearest', inline: 'nearest' }); });
     $$('.panel').forEach(p => p.hidden = p.id !== 'p-' + name);
+    $$('.mnav-b').forEach(b => b.classList.toggle('on', (b.dataset.group || b.dataset.go).split(' ').includes(name)));
+    const sh = $('#msheet'); if (sh) sh.hidden = true;
+    if (window.matchMedia && matchMedia('(max-width:720px)').matches && init.done) window.scrollTo(0, 0);
     if (name === 'dict') renderDict();
     if (location.hash !== '#' + name) history.replaceState(null, '', '#' + name);
   }
   function init() {
     $('#stat-words').textContent = entries.length;
     $$('.tab').forEach(t => t.onclick = () => setTab(t.dataset.tab));
+    // нижняя навигация (телефоны)
+    let lastTr = 'la';
+    $$('.mnav-b').forEach(b => b.onclick = () => {
+      const cur = location.hash.slice(1);
+      if (b.hasAttribute('data-more')) { $('#msheet').hidden = !$('#msheet').hidden; return; }
+      if (b.dataset.go === 'la') { if (cur === 'la' || cur === 'ru') lastTr = cur; setTab(cur === 'la' || cur === 'ru' ? cur : lastTr); return; }
+      if (cur === 'la' || cur === 'ru') lastTr = cur;
+      setTab(b.dataset.go);
+    });
+    $('#msheet').addEventListener('click', ev => { if (ev.target.id === 'msheet') $('#msheet').hidden = true; });
+    // клавиатура на телефоне: прячем нижнюю панель, пока вводится текст
+    document.addEventListener('focusin', ev => { if (ev.target.matches('input[type=search],input:not([type]),textarea,.tr-in')) document.body.classList.add('kb'); });
+    document.addEventListener('focusout', () => setTimeout(() => { if (!document.activeElement || !document.activeElement.matches('input,textarea')) document.body.classList.remove('kb'); }, 50));
     const laIn = $('#la-in'), ruIn = $('#ru-in');
-    const runLa = () => renderLa(translateLa(laIn.value));
+    // каждая строка переводится отдельно (список терминов, текст с фото)
+    const runLa = () => renderLa(laIn.value.split(/\n+/).map(l => translateLa(l)).filter(x => x.length).reduce((a, x) => a.length ? a.concat([{ type: 'br' }], x) : x, []));
     const runRu = () => { ruItems = translateRu(ruIn.value); renderRu(); };
     laIn.addEventListener('input', debounce(runLa, 150));
     ruIn.addEventListener('input', debounce(runRu, 150));
@@ -636,6 +849,7 @@
     const h = location.hash.slice(1);
     setTab(['la', 'ru', 'dict', 'el', 'gram', 'train', 'about'].includes(h) ? h : 'la');
     runLa(); runRu();
+    init.done = true;
   }
   window.Translator = { translateLa, translateRu, buildLatin, entries, laIndex, decompose };
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init); else init();

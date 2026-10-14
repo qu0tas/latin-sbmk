@@ -22,6 +22,8 @@ for f in sorted(glob.glob(os.path.join(HERE,'raw','*.txt'))):
             la,gr=left,''; extra={'abbr':True}
         elif base.startswith('s_aphor'):  # афоризмы: перевод целиком, без деления по запятым
             la,gr=left,''; extra={'whole':True}
+        elif base.startswith('u_') and ' ' in la and la[0].isupper():  # крылатые выражения из заданий
+            la,gr=left,''; extra={'whole':True}
         elif base.startswith('s_') and ',' in la and ' ' in la:  # «misce, ut fiat pasta» — перевод целиком
             extra={'whole':True}
         if page: src='Кравченко, словарь, с. %d'%page
@@ -29,6 +31,7 @@ for f in sorted(glob.glob(os.path.join(HERE,'raw','*.txt'))):
         elif base.startswith('s_abbr'): src='Глоссарий СБМК, рецептурные сокращения'
         elif base.startswith('s_aphor'): src='Глоссарий СБМК, афоризмы'
         elif base.startswith('s_'): src='Глоссарий СБМК'
+        elif base.startswith('u_'): src='Городкова, упражнения и грамматика (гл. «Глагол»)'
         else: src='Дополнения'
         e={'la':la,'gr':gr,'ru':ru,'src':src}; e.update(extra)
         out.append(e)

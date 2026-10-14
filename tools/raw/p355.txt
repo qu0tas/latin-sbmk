@@ -36,7 +36,7 @@ pyuria, -ae, f — пиурия (наличие гноя в моче)
 quadrangularis, -e — четырехугольный
 quadratus, -a, -um — квадратный
 quadriceps, -cipitis — четырехглавый
-quantum satis — сколько потребуется
+quantum satis — сколько потребуется, сколько нужно
 quartus, -a, -um — четвертый
 Quercus, -us, f — дуб
 quintus, -a, -um — пятый

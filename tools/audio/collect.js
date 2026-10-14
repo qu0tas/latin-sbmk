@@ -1,0 +1,20 @@
+// Сбор всех фраз для озвучки: node tools/audio/collect.js  →  tools/audio/texts.json
+const fs=require('fs');global.window=globalThis;global.document={readyState:'loading',addEventListener(){},querySelector(){return null}};global.localStorage={getItem(){return null},setItem(){}};
+const path=require('path');const R=path.resolve(__dirname,'../..')+'/';
+for (const f of ['data/dictionary.js','js/morph.js','js/app.js','data/trainer.js','js/stress.js','js/grammar.js','js/speech.js']) eval(fs.readFileSync(R+f,'utf8'));
+const S=window.Speech, T=window.Translator, D=window.TRAINER_DATA, G=window.Grammar;
+const la=new Set(), ru=new Set();
+const addLa=x=>{ if(!x) return; const t=S.cleanLa(x); if(!t||!/^[A-Za-zÀ-ÿĀ-žȳ\u0304\u0306 .,'-]+$/.test(t)) return; la.add(x); t.split(/\s+/).forEach(w=>{ if(/[A-Za-z]{2,}/.test(w)) la.add(w.replace(/[.,]/g,'')); }); };
+T.entries.forEach(e=>{ if(e.abbr) return; addLa(e.la); if(e.info&&e.info.genFull) addLa(e.info.genFull); });
+D.lists.forEach(L=>{ const ab=/сокращ/i.test(L.labelA); L.items.forEach(([a,b])=>{ if(ab) return; addLa(a); ru.add(b); }); });
+D.systems.forEach(s=>s.rows.forEach(r=>{ ru.add(r[0]); [1,3].forEach(c=>r[c]&&addLa(r[c])); }));
+G.WORDS.concat(G.DICT).forEach(x=>addLa(x.w));
+const gsrc=fs.readFileSync(R+'js/grammar.js','utf8'); (gsrc.match(/ex\('([^']+)'/g)||[]).forEach(m=>addLa(m.slice(4,-1)));
+(gsrc.match(/'([A-Za-zäëö]+) \[/g)||[]).forEach(m=>addLa(m.slice(1,-2)));
+const out={};
+const toPlus=s=>s.normalize('NFC').replace(/([аэеиоуыяюёАЭЕИОУЫЯЮЁ])\u0301/g,'+$1');
+la.forEach(x=>{ const t=S.tr(S.cleanLa(x)).say; if(t&&!/[A-Za-z]/.test(t)) out[t]=toPlus(t); });
+ru.forEach(x=>{ const t=S.cleanRu(x); if(t&&!/[A-Za-z]/.test(t)) out[t]=t; });
+fs.writeFileSync(path.join(__dirname,'texts.json'),JSON.stringify(out));
+const vals=Object.values(out); console.log('la src',la.size,'ru src',ru.size,'clips',vals.length,'chars',vals.join('').length, 'maxlen',Math.max(...vals.map(v=>v.length)));
+console.log(vals.slice(0,5), vals.filter(v=>v.length>80).length);

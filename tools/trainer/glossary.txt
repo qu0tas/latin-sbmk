@@ -971,3 +971,52 @@ para- | около
 -sclerosis | болезненное уплотнение
 -stenosis | сужение
 -spasmus | болезненное сокращение
+
+## Словосочетания | Задание 2.5.5. Анатомические и клинические термины | Латынь | Перевод
+labium superius | верхняя губа
+arteria femoralis | бедренная артерия
+costa sinistra | левое ребро
+aqua destillata | дистиллированная вода
+canalis obturatorius | запирательный канал
+columna vertebralis | позвоночный столб
+humerus dexter | правая плечевая кость
+fascia cervicalis | шейная фасция
+digitus minimus | мизинец; самый малый палец
+morbus epidemicus | эпидемическая болезнь
+brachium sinistrum | левое плечо
+nervus vagus | блуждающий нерв
+intestinum crassum | толстая кишка
+oculus dexter | правый глаз
+musculus trapezius | трапециевидная мышца
+vena axillaris | подмышечная вена
+arteria coronaria dextra | правая венечная артерия
+nervus ischiadicus | седалищный нерв
+musculus pectoralis major | большая грудная мышца
+morbus chronicus | хроническая болезнь
+nervus ophthalmicus | глазной нерв
+musculus zygomaticus minor | малая скуловая мышца
+vena cava inferior | нижняя полая вена
+nervus tibialis | большеберцовый нерв
+intestinum tenue | тонкая кишка
+digitus medius | средний палец
+musculus gluteus medius | средняя ягодичная мышца
+arteria facialis | лицевая артерия
+vesica urinaria | мочевой пузырь
+vena renalis | почечная вена
+
+## Словосочетания | Задание 3.9.3. Словосочетания с несогласованным определением | Латынь | Перевод
+musculus buccae | мышца щеки
+sutura cranii | шов черепа
+cavitas dentis | полость зуба
+tinctura Absinthii | настойка полыни
+radix linguae | корень языка
+folium Salviae | лист шалфея
+vena cerebri | вена головного мозга
+arcus vertebrae | дуга позвонка
+gutta olei | капля масла
+cervix uteri | шейка матки
+fractura digiti | перелом пальца
+crista colli costae | гребень шейки ребра
+tabuletta Glucosi | таблетка глюкозы
+cancer recti | рак прямой кишки
+angulus sterni | угол грудины
